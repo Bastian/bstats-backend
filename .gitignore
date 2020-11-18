@@ -1,3 +1,6 @@
+# Redis Data Volume
+/volume/redis/redis-data
+
 # compiled output
 /dist
 /node_modules

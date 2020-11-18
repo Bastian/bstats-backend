@@ -1,0 +1,10 @@
+version: "3.2"
+services:
+  redis:
+    image: "redis:alpine"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - './volume/redis/redis-data:/data'
+      - './volume/redis/redis.conf:/usr/local/etc/redis/redis.conf'

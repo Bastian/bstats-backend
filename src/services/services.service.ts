@@ -1,35 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Service } from './interfaces/service.interface';
+import { RedisServicesService } from './redis-services/redis-services.service';
 
 @Injectable()
 export class ServicesService {
-  // TODO Read from database
-  private readonly services: Service[] = [
-    {
-      id: 1,
-      name: '_bukkit_',
-      owner: { name: 'Admin' },
-      software: { id: 1 },
-      isGlobal: true,
-    },
-    {
-      id: 4,
-      name: 'SafeTrade',
-      owner: { name: 'BtoBastian' },
-      software: { id: 1 },
-      isGlobal: false,
-    },
-  ];
+  constructor(private redisServicesService: RedisServicesService) {}
 
-  findAll(): Service[] {
-    return this.services;
+  async findAll(): Promise<Service[]> {
+    const serviceIds = await this.redisServicesService.findAllServiceIds();
+    return Promise.all(serviceIds.map((id) => this.findOne(id)));
   }
 
-  findOne(id: number): Service {
-    const service = this.services.find((service) => service.id === id);
-    if (service == null) {
-      throw new NotFoundException();
-    }
-    return service;
+  async findOne(id: number): Promise<Service> {
+    const redisService = await this.redisServicesService.findServiceById(id);
+
+    return {
+      id,
+      name: redisService.name,
+      owner: {
+        name: redisService.owner,
+      },
+      software: {
+        id: redisService.software,
+      },
+      isGlobal: redisService.global,
+    };
   }
 }

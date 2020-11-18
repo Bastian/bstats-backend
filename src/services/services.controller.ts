@@ -7,12 +7,12 @@ export class ServicesController {
   constructor(private servicesService: ServicesService) {}
 
   @Get()
-  findAll(): Service[] {
+  async findAll(): Promise<Service[]> {
     return this.servicesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Service {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Service> {
     return this.servicesService.findOne(id);
   }
 }
