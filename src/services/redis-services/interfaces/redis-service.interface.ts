@@ -3,4 +3,5 @@ export interface RedisService {
   owner: string;
   software: number;
   global: boolean;
+  charts: number[];
 }

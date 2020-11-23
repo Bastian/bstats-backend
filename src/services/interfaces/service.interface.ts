@@ -8,4 +8,5 @@ export interface Service {
     id: number;
   };
   isGlobal: boolean;
+  chartIds: number[];
 }

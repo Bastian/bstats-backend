@@ -25,6 +25,7 @@ export class RedisServicesService {
       owner: response[1],
       software: parseInt(response[2]),
       global: response[3] !== null,
+      charts: JSON.parse(response[4]),
     };
   }
 

@@ -24,6 +24,7 @@ export class ServicesService {
         id: redisService.software,
       },
       isGlobal: redisService.global,
+      chartIds: redisService.charts,
     };
   }
 }
