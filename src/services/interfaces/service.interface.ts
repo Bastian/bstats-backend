@@ -1,3 +1,5 @@
+import { Chart } from '../../charts/interfaces/chart.interface';
+
 export interface Service {
   id: number;
   name: string;
@@ -8,5 +10,6 @@ export interface Service {
     id: number;
   };
   isGlobal: boolean;
-  chartIds: number[];
+  chartIds?: number[];
+  charts?: Chart[];
 }
