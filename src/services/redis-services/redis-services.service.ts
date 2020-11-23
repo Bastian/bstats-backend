@@ -11,7 +11,7 @@ export class RedisServicesService {
   constructor(private connectionService: ConnectionService) {}
 
   async findServiceById(id: number): Promise<RedisService> {
-    const fields = ['name', 'owner', 'software', 'global'];
+    const fields = ['name', 'owner', 'software', 'global', 'charts'];
     const response = await this.connectionService
       .getRedis()
       .hmget(`plugins:${id}`, fields);
@@ -39,5 +39,20 @@ export class RedisServicesService {
     }
 
     return response.map((s) => parseInt(s));
+  }
+
+  async findServiceIdBySoftwareUrlAndName(
+    softwareUrl: string,
+    name: string,
+  ): Promise<number> {
+    const serviceId = await this.connectionService
+      .getRedis()
+      .get(`plugins.index.id.url+name:${softwareUrl}.${name}`);
+
+    if (serviceId == null) {
+      throw new NotFoundException();
+    }
+
+    return parseInt(serviceId);
   }
 }

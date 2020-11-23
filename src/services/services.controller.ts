@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { Service } from './interfaces/service.interface';
 import { ServicesService } from './services.service';
 
@@ -9,6 +9,14 @@ export class ServicesController {
   @Get()
   async findAll(): Promise<Service[]> {
     return this.servicesService.findAll();
+  }
+
+  @Get('search')
+  async findBySoftwareUrlAndName(
+    @Query('softwareUrl') softwareUrl: string,
+    @Query('name') name: string,
+  ): Promise<Service> {
+    return this.servicesService.findBySoftwareUrlAndName(softwareUrl, name);
   }
 
   @Get(':id')

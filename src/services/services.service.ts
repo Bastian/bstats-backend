@@ -27,4 +27,16 @@ export class ServicesService {
       chartIds: redisService.charts,
     };
   }
+
+  async findBySoftwareUrlAndName(
+    softwareUrl: string,
+    name: string,
+  ): Promise<Service> {
+    return this.findOne(
+      await this.redisServicesService.findServiceIdBySoftwareUrlAndName(
+        softwareUrl,
+        name,
+      ),
+    );
+  }
 }
