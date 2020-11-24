@@ -1,3 +1,8 @@
+import { SimpleMapData } from './simple-map-data';
+import { SingleLineChartData } from './single-line-chart-data.interface';
+import { SimplePieChartData } from './single-pie-chart-data';
+import { DrilldownPieChartData } from './drilldown-pie-chart-data';
+
 export interface Chart {
   id: number;
   idCustom: string;
@@ -8,42 +13,6 @@ export interface Chart {
     | SingleLineChartData
     | SimplePieChartData
     | DrilldownPieChartData
+    | SimpleMapData
     | unknown;
-}
-
-export interface SingleLineChartData {
-  lineName: string;
-  filter?: {
-    enabled: boolean;
-    maxValue: number;
-    minValue: number;
-  };
-}
-
-export interface SimplePieChartData {
-  filter?: {
-    enabled: boolean;
-    useRegex: boolean;
-    blacklist: boolean;
-    filter: string[];
-  };
-}
-
-export interface DrilldownPieChartData {
-  filter?: {
-    enabled: boolean;
-    useRegex: boolean;
-    blacklist: boolean;
-    filter: string[];
-  };
-}
-
-export interface SimpleMapData {
-  valueName: string;
-  filter?: {
-    enabled: boolean;
-    useRegex: boolean;
-    blacklist: boolean;
-    filter: string[];
-  };
 }

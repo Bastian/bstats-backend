@@ -1,3 +1,5 @@
+import { DefaultChart } from '../../../charts/interfaces/default-chart.interface';
+
 export interface RedisSoftware {
   name: string;
   url: string;
@@ -5,6 +7,6 @@ export interface RedisSoftware {
   metricsClass: string;
   examplePlugin: string;
   maxRequestsPerIp: number;
-  defaultCharts: unknown; // TODO
+  defaultCharts: DefaultChart[];
   hideInPluginList: boolean;
 }
