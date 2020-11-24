@@ -8,5 +8,6 @@ import { ChartsModule } from '../charts/charts.module';
   controllers: [ServicesController],
   providers: [ServicesService, RedisServicesService],
   imports: [ChartsModule],
+  exports: [ServicesService],
 })
 export class ServicesModule {}

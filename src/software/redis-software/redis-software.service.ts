@@ -32,11 +32,15 @@ export class RedisSoftwareService {
     return {
       name: response[0],
       url: response[1],
-      globalPlugin: parseInt(response[2]),
+      globalPlugin: response[2] == null ? null : parseInt(response[2]),
       metricsClass: response[3],
       examplePlugin: response[4],
       maxRequestsPerIp: parseInt(response[5]),
-      defaultCharts: JSON.parse(response[6]),
+      defaultCharts: JSON.parse(response[6]).map((chart) => ({
+        ...chart,
+        id: undefined,
+        idCustom: chart.id,
+      })),
       hideInPluginList: response[7] !== null,
     };
   }
@@ -51,5 +55,17 @@ export class RedisSoftwareService {
     }
 
     return response.map((s) => parseInt(s));
+  }
+
+  async findSoftwareIdByUrl(url: string): Promise<number> {
+    const softwareId = await this.connectionService
+      .getRedis()
+      .get(`software.index.id.url:${url}`);
+
+    if (softwareId == null) {
+      throw new NotFoundException();
+    }
+
+    return parseInt(softwareId);
   }
 }

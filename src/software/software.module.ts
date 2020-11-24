@@ -6,5 +6,6 @@ import { RedisSoftwareService } from './redis-software/redis-software.service';
 @Module({
   providers: [SoftwareService, RedisSoftwareService],
   controllers: [SoftwareController],
+  exports: [SoftwareService],
 })
 export class SoftwareModule {}

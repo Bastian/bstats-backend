@@ -31,4 +31,52 @@ export class ChartsService {
       ),
     );
   }
+
+  async updatePieData(
+    id: number,
+    tms2000: number,
+    valueName: string,
+    value: number,
+  ) {
+    return this.redisChartsService.updatePieData(id, tms2000, valueName, value);
+  }
+
+  async updateMapData(
+    id: number,
+    tms2000: number,
+    valueName: string,
+    value: number,
+  ) {
+    return this.redisChartsService.updateMapData(id, tms2000, valueName, value);
+  }
+
+  async updateLineChartData(
+    id: number,
+    tms2000: number,
+    line: string,
+    value: number,
+  ) {
+    return this.redisChartsService.updateLineChartData(
+      id,
+      tms2000,
+      line,
+      value,
+    );
+  }
+
+  async updateDrilldownPieData(
+    id: number,
+    tms2000: number,
+    valueName: string,
+    values: {
+      [key: string]: number;
+    },
+  ) {
+    return this.redisChartsService.updateDrilldownPieData(
+      id,
+      tms2000,
+      valueName,
+      values,
+    );
+  }
 }

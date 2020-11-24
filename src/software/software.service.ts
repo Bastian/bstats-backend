@@ -26,4 +26,10 @@ export class SoftwareService {
       hideInPluginList: redisSoftware.hideInPluginList,
     };
   }
+
+  async findOneByUrl(url: string): Promise<Software> {
+    return this.findOne(
+      await this.redisSoftwareService.findSoftwareIdByUrl(url),
+    );
+  }
 }
