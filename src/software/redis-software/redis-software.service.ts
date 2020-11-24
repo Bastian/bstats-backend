@@ -11,7 +11,7 @@ import { assertIsDefined } from '../../assertions';
 export class RedisSoftwareService {
   constructor(private connectionService: ConnectionService) {}
 
-  async findSoftwareById(id: number): Promise<RedisSoftware> {
+  async findSoftwareById(id: number): Promise<RedisSoftware | null> {
     const fields = [
       'name',
       'url',
@@ -27,7 +27,7 @@ export class RedisSoftwareService {
       .hmget(`software:${id}`, fields);
 
     if (response == null) {
-      throw new NotFoundException();
+      return null;
     }
 
     assertIsDefined(response[0]);
@@ -65,13 +65,13 @@ export class RedisSoftwareService {
     return response.map((s) => parseInt(s));
   }
 
-  async findSoftwareIdByUrl(url: string): Promise<number> {
+  async findSoftwareIdByUrl(url: string): Promise<number | null> {
     const softwareId = await this.connectionService
       .getRedis()
       .get(`software.index.id.url:${url}`);
 
     if (softwareId == null) {
-      throw new NotFoundException();
+      return null;
     }
 
     return parseInt(softwareId);

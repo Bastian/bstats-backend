@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { Chart } from './interfaces/chart.interface';
 import { ChartsService } from './charts.service';
+import { assertIsDefinedOrThrowNotFound } from '../assertions';
 
 @Controller('charts')
 export class ChartsController {
@@ -8,6 +9,8 @@ export class ChartsController {
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Chart> {
-    return this.chartsService.findOne(id);
+    const chart = await this.chartsService.findOne(id);
+    assertIsDefinedOrThrowNotFound(chart);
+    return chart;
   }
 }

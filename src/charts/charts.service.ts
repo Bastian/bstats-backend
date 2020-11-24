@@ -6,8 +6,12 @@ import { RedisChartsService } from './redis-charts/redis-charts.service';
 export class ChartsService {
   constructor(private redisChartsService: RedisChartsService) {}
 
-  async findOne(id: number): Promise<Chart> {
+  async findOne(id: number): Promise<Chart | null> {
     const redisChart = await this.redisChartsService.findChartById(id);
+
+    if (redisChart == null) {
+      return null;
+    }
 
     return {
       id,
@@ -23,13 +27,15 @@ export class ChartsService {
   async findByServiceIdAndCustomId(
     serviceId: number,
     customId: string,
-  ): Promise<Chart> {
-    return this.findOne(
-      await this.redisChartsService.findChartIdByServiceIdAndCustomId(
-        serviceId,
-        customId,
-      ),
+  ): Promise<Chart | null> {
+    const chartId = await this.redisChartsService.findChartIdByServiceIdAndCustomId(
+      serviceId,
+      customId,
     );
+    if (chartId == null) {
+      return null;
+    }
+    return this.findOne(chartId);
   }
 
   async updatePieData(

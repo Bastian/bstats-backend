@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RedisSoftwareService } from './redis-software/redis-software.service';
 import { Software } from './interfaces/software.interface';
+import { isNotNull } from '../assertions';
 
 @Injectable()
 export class SoftwareService {
@@ -8,11 +9,18 @@ export class SoftwareService {
 
   async findAll(): Promise<Software[]> {
     const softwareIds = await this.redisSoftwareService.findAllSoftwareIds();
-    return Promise.all(softwareIds.map((id) => this.findOne(id)));
+    const software = await Promise.all(
+      softwareIds.map((id) => this.findOne(id)),
+    );
+    return software.filter(isNotNull);
   }
 
-  async findOne(id: number): Promise<Software> {
+  async findOne(id: number): Promise<Software | null> {
     const redisSoftware = await this.redisSoftwareService.findSoftwareById(id);
+
+    if (redisSoftware === null) {
+      return null;
+    }
 
     return {
       id,
@@ -27,9 +35,11 @@ export class SoftwareService {
     };
   }
 
-  async findOneByUrl(url: string): Promise<Software> {
-    return this.findOne(
-      await this.redisSoftwareService.findSoftwareIdByUrl(url),
-    );
+  async findOneByUrl(url: string): Promise<Software | null> {
+    const softwareId = await this.redisSoftwareService.findSoftwareIdByUrl(url);
+    if (softwareId === null) {
+      return null;
+    }
+    return this.findOne(softwareId);
   }
 }

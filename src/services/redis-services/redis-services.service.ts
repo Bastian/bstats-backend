@@ -12,14 +12,14 @@ import { assertIsDefined } from '../../assertions';
 export class RedisServicesService {
   constructor(private connectionService: ConnectionService) {}
 
-  async findServiceById(id: number): Promise<RedisService> {
+  async findServiceById(id: number): Promise<RedisService | null> {
     const fields = ['name', 'owner', 'software', 'global', 'charts'];
     const response = await this.connectionService
       .getRedis()
       .hmget(`plugins:${id}`, fields);
 
     if (response == null) {
-      throw new NotFoundException();
+      return null;
     }
 
     assertIsDefined(response[0]);
@@ -51,13 +51,13 @@ export class RedisServicesService {
   async findServiceIdBySoftwareUrlAndName(
     softwareUrl: string,
     name: string,
-  ): Promise<number> {
+  ): Promise<number | null> {
     const serviceId = await this.connectionService
       .getRedis()
       .get(`plugins.index.id.url+name:${softwareUrl}.${name}`);
 
     if (serviceId == null) {
-      throw new NotFoundException();
+      return null;
     }
 
     return parseInt(serviceId);

@@ -11,14 +11,14 @@ export class RedisChartsService {
     private dateUtilService: DateUtilService,
   ) {}
 
-  async findChartById(id: number): Promise<RedisChart> {
+  async findChartById(id: number): Promise<RedisChart | null> {
     const fields = ['id', 'type', 'position', 'title', 'default', 'data'];
     const response = await this.connectionService
       .getRedis()
       .hmget(`charts:${id}`, fields);
 
     if (response == null) {
-      throw new NotFoundException();
+      return null;
     }
 
     assertIsDefined(response[0]);
@@ -40,13 +40,13 @@ export class RedisChartsService {
   async findChartIdByServiceIdAndCustomId(
     serviceId: number,
     customId: string,
-  ): Promise<number> {
+  ): Promise<number | null> {
     const chartId = await this.connectionService
       .getRedis()
       .get(`charts.index.uid.pluginId+chartId:${serviceId}.${customId}`);
 
     if (chartId == null) {
-      throw new NotFoundException();
+      return null;
     }
 
     return parseInt(chartId);

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { Service } from './interfaces/service.interface';
 import { ServicesService } from './services.service';
+import { assertIsDefinedOrThrowNotFound } from '../assertions';
 
 @Controller('services')
 export class ServicesController {
@@ -26,11 +27,13 @@ export class ServicesController {
     @Query('includeCharts', new DefaultValuePipe(false), ParseBoolPipe)
     includeCharts: boolean,
   ): Promise<Service> {
-    return this.servicesService.findBySoftwareUrlAndName(
+    const service = await this.servicesService.findBySoftwareUrlAndName(
       softwareUrl,
       name,
       includeCharts,
     );
+    assertIsDefinedOrThrowNotFound(service);
+    return service;
   }
 
   @Get(':id')
@@ -39,6 +42,8 @@ export class ServicesController {
     @Query('includeCharts', new DefaultValuePipe(false), ParseBoolPipe)
     includeCharts: boolean,
   ): Promise<Service> {
-    return this.servicesService.findOne(id, includeCharts);
+    const service = await this.servicesService.findOne(id, includeCharts);
+    assertIsDefinedOrThrowNotFound(service);
+    return service;
   }
 }

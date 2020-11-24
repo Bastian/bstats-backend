@@ -22,7 +22,7 @@ import { Service } from '../services/interfaces/service.interface';
 import { ChartsService } from '../charts/charts.service';
 import { isDrilldownPieChart } from '../charts/interfaces/drilldown-pie-chart.interface';
 import { isAdvancedPieChart } from '../charts/interfaces/advanced-pie-chart.interface';
-import { assertIsDefined } from '../assertions';
+import { assertIsDefined, assertIsDefinedOrThrowNotFound } from '../assertions';
 
 @Injectable()
 export class DataSubmissionService {
@@ -35,6 +35,7 @@ export class DataSubmissionService {
 
   async submitData(softwareUrl: string, submitDataDto: SubmitDataDto) {
     const software = await this.softwareService.findOneByUrl(softwareUrl);
+    assertIsDefinedOrThrowNotFound(software);
     const tms2000 = this.dateUtilService.dateToTms2000(new Date());
     // TODO Ratelimiting
     // TODO Lookup location with ip
@@ -311,10 +312,10 @@ export class DataSubmissionService {
 
       // If there's a global plugin for the software, add it as a "fake" plugin to the request
       if (software.globalPlugin != null) {
-        try {
-          const globalPlugin = await this.servicesService.findOne(
-            software.globalPlugin,
-          );
+        const globalPlugin = await this.servicesService.findOne(
+          software.globalPlugin,
+        );
+        if (globalPlugin !== null) {
           submitDataDto.plugins.push(
             new SubmitDataPluginDto(
               globalPlugin.id,
@@ -323,10 +324,6 @@ export class DataSubmissionService {
               requestRandom,
             ),
           );
-        } catch (e) {
-          if (!(e instanceof NotFoundException)) {
-            throw e;
-          }
         }
       }
 
@@ -413,6 +410,9 @@ export class DataSubmissionService {
             service.id,
             customChartData.chartId,
           );
+          if (chart === null) {
+            return;
+          }
           if (isSimplePieChart(chart)) {
             if (
               typeof customChartData.data !== 'object' ||
