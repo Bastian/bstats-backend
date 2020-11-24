@@ -6,6 +6,7 @@ import { DrilldownPieChartData } from './drilldown-pie-chart-data';
 export interface Chart {
   id: number;
   idCustom: string;
+  type: string;
   position: number;
   title: string;
   isDefault: boolean;

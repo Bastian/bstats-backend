@@ -12,6 +12,7 @@ export class ChartsService {
     return {
       id,
       idCustom: redisChart.idCustom,
+      type: redisChart.type,
       position: redisChart.position,
       title: redisChart.title,
       isDefault: redisChart.default,
