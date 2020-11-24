@@ -22,6 +22,7 @@ import { Service } from '../services/interfaces/service.interface';
 import { ChartsService } from '../charts/charts.service';
 import { isDrilldownPieChart } from '../charts/interfaces/drilldown-pie-chart.interface';
 import { isAdvancedPieChart } from '../charts/interfaces/advanced-pie-chart.interface';
+import { assertIsDefined } from '../assertions';
 
 @Injectable()
 export class DataSubmissionService {
@@ -274,6 +275,9 @@ export class DataSubmissionService {
             continue;
           case 'bungeecordVersion':
             const { bungeecordVersion } = submitDataDto;
+            if (!bungeecordVersion) {
+              continue;
+            }
             const split = bungeecordVersion.split(':');
             defaultGlobalCharts.push(
               new SubmitDataCustomChartDto(
@@ -328,7 +332,7 @@ export class DataSubmissionService {
 
       // Find the service that belongs to the request
       const servicesWithData: Array<{
-        service: Service;
+        service: Service | null;
         data: SubmitDataPluginDto;
       }> = await Promise.all(
         submitDataDto.plugins.map(async (data) => {
@@ -345,13 +349,22 @@ export class DataSubmissionService {
               ),
               data,
             };
+          } else {
+            return { service: null, data };
           }
         }),
       );
 
       const handledServiceIds: Set<number> = new Set();
       const promises: Promise<unknown>[] = servicesWithData
-        .filter(({ service }) => service !== null)
+        .filter(
+          (
+            serviceWithData,
+          ): serviceWithData is {
+            service: Service;
+            data: SubmitDataPluginDto;
+          } => serviceWithData.service !== null,
+        )
         // Remove duplicates
         .filter(({ service }) => {
           if (handledServiceIds.has(service.id)) {

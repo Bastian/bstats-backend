@@ -13,7 +13,7 @@ export class ConnectionService {
 
     const node = {
       host: configService.get<string>('REDIS_HOST'),
-      port: parseInt(configService.get<string>('REDIS_PORT')),
+      port: parseInt(configService.get<string>('REDIS_PORT') ?? '-1'),
     };
 
     if (useCluster) {

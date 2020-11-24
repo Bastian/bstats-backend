@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { ConnectionService } from '../../database/connection.service';
 import { RedisService } from './interfaces/redis-service.interface';
+import assert from 'assert';
+import { assertIsDefined } from '../../assertions';
 
 @Injectable()
 export class RedisServicesService {
@@ -19,6 +21,11 @@ export class RedisServicesService {
     if (response == null) {
       throw new NotFoundException();
     }
+
+    assertIsDefined(response[0]);
+    assertIsDefined(response[1]);
+    assertIsDefined(response[2]);
+    assertIsDefined(response[4]);
 
     return {
       name: response[0],

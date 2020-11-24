@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConnectionService } from '../../database/connection.service';
 import { RedisChart } from './interfaces/redis-chart.interface';
 import { DateUtilService } from '../date-util.service';
+import { assertIsDefined } from '../../assertions';
 
 @Injectable()
 export class RedisChartsService {
@@ -19,6 +20,12 @@ export class RedisChartsService {
     if (response == null) {
       throw new NotFoundException();
     }
+
+    assertIsDefined(response[0]);
+    assertIsDefined(response[1]);
+    assertIsDefined(response[2]);
+    assertIsDefined(response[3]);
+    assertIsDefined(response[5]);
 
     return {
       idCustom: response[0],
