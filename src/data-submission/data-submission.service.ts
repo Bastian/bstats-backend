@@ -259,9 +259,9 @@ export class DataSubmissionService {
           }
           return this.chartsService.updateLineChartData(
             chart.id,
-            value,
-            '1',
             tms2000,
+            '1',
+            value,
           );
         } else if (isSimpleMapDataChart(chart)) {
           if (
