@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Chart } from './interfaces/charts/chart.interface';
 import { RedisChartsService } from './redis-charts/redis-charts.service';
+import { ChartData } from './interfaces/data/chart-data.interface';
 
 @Injectable()
 export class ChartsService {
@@ -22,6 +23,28 @@ export class ChartsService {
       isDefault: redisChart.default,
       data: redisChart.data,
     };
+  }
+
+  async findData(id: number, maxElements: number): Promise<ChartData | null> {
+    const chart = await this.findOne(id);
+    if (chart === null) {
+      return null;
+    }
+
+    switch (chart.type) {
+      case 'simple_pie':
+      case 'advanced_pie':
+        return this.redisChartsService.getPieData(id);
+      case 'drilldown_pie':
+        return this.redisChartsService.getDrilldownPieData(id);
+      case 'single_linechart':
+        return this.redisChartsService.getLineChartData(id, '1', maxElements);
+      case 'simple_map':
+      case 'advanced_map':
+        return this.redisChartsService.getMapData(id);
+    }
+
+    return null;
   }
 
   async findByServiceIdAndCustomId(
