@@ -126,7 +126,7 @@ export class PopulatorService {
         },
       },
       {
-        uid: 8,
+        uid: 7,
         id: 'coreCount',
         type: 'simple_pie',
         position: 5,
