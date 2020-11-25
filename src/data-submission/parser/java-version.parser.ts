@@ -9,6 +9,26 @@ import { DefaultChart } from '../../charts/interfaces/default-chart.interface';
 
 @Injectable()
 export class JavaVersionParser implements Parser {
+  private JAVA_VERSION_MAPPING = [
+    ['1.7', 'Java 7'],
+    ['1.8', 'Java 8'],
+    //java 9 changed the version format to 9.0.1 and 1.9.0 is only used for early access
+    //reference: http://openjdk.java.net/jeps/223
+    ['1.9.0-ea', 'Java 9'],
+    ['9', 'Java 9'],
+    ['10', 'Java 10'],
+    ['11', 'Java 11'],
+    ['12', 'Java 12'],
+    ['13', 'Java 13'],
+    ['14', 'Java 14'],
+    ['15', 'Java 15'],
+    ['16', 'Java 16'],
+    ['17', 'Java 17'],
+    ['18', 'Java 18'],
+    ['19', 'Java 19'],
+    ['20', 'Java 20'],
+  ];
+
   parse(
     chart: DefaultChart,
     submitDataDto: SubmitDataDto,
@@ -24,54 +44,17 @@ export class JavaVersionParser implements Parser {
       { values: {} },
       requestRandom,
     );
-    if (javaVersion.startsWith('1.7')) {
-      javaVersionChart.data.values['Java 7'] = {};
-      javaVersionChart.data.values['Java 7'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('1.8')) {
-      javaVersionChart.data.values['Java 8'] = {};
-      javaVersionChart.data.values['Java 8'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('9') || javaVersion === '1.9.0-ea') {
-      //java 9 changed the version format to 9.0.1 and 1.9.0 is only used for early access
-      //reference: http://openjdk.java.net/jeps/223
-      javaVersionChart.data.values['Java 9'] = {};
-      javaVersionChart.data.values['Java 9'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('10')) {
-      javaVersionChart.data.values['Java 10'] = {};
-      javaVersionChart.data.values['Java 10'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('11')) {
-      javaVersionChart.data.values['Java 11'] = {};
-      javaVersionChart.data.values['Java 11'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('12')) {
-      javaVersionChart.data.values['Java 12'] = {};
-      javaVersionChart.data.values['Java 12'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('13')) {
-      javaVersionChart.data.values['Java 13'] = {};
-      javaVersionChart.data.values['Java 13'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('14')) {
-      javaVersionChart.data.values['Java 14'] = {};
-      javaVersionChart.data.values['Java 14'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('15')) {
-      javaVersionChart.data.values['Java 15'] = {};
-      javaVersionChart.data.values['Java 15'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('16')) {
-      javaVersionChart.data.values['Java 16'] = {};
-      javaVersionChart.data.values['Java 16'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('17')) {
-      javaVersionChart.data.values['Java 17'] = {};
-      javaVersionChart.data.values['Java 17'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('18')) {
-      javaVersionChart.data.values['Java 18'] = {};
-      javaVersionChart.data.values['Java 18'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('19')) {
-      javaVersionChart.data.values['Java 19'] = {};
-      javaVersionChart.data.values['Java 19'][javaVersion] = 1;
-    } else if (javaVersion.startsWith('20')) {
-      javaVersionChart.data.values['Java 20'] = {};
-      javaVersionChart.data.values['Java 20'][javaVersion] = 1;
-    } else {
-      javaVersionChart.data.values['Other'] = {};
-      javaVersionChart.data.values['Other'][javaVersion] = 1;
+
+    for (const [identifier, readableName] of this.JAVA_VERSION_MAPPING) {
+      if (javaVersion.startsWith(identifier)) {
+        javaVersionChart.data.values[readableName] = {};
+        javaVersionChart.data.values[readableName][javaVersion] = 1;
+        return [javaVersionChart];
+      }
     }
+
+    javaVersionChart.data.values['Other'] = {};
+    javaVersionChart.data.values['Other'][javaVersion] = 1;
     return [javaVersionChart];
   }
 }
