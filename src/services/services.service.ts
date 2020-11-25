@@ -3,7 +3,6 @@ import { Service } from './interfaces/service.interface';
 import { RedisServicesService } from './redis-services/redis-services.service';
 import { ChartsService } from '../charts/charts.service';
 import { assertIsDefined, isNotNull } from '../assertions';
-import { isDefined } from 'class-validator';
 
 @Injectable()
 export class ServicesService {

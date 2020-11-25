@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { SubmitDataDto } from './dto/submit-data.dto';
 import { DataSubmissionService } from './data-submission.service';
 

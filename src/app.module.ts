@@ -7,7 +7,13 @@ import { ChartsModule } from './charts/charts.module';
 import { DataSubmissionModule } from './data-submission/data-submission.module';
 
 @Module({
-  imports: [ServicesModule, DatabaseModule, SoftwareModule, ChartsModule, DataSubmissionModule],
+  imports: [
+    ServicesModule,
+    DatabaseModule,
+    SoftwareModule,
+    ChartsModule,
+    DataSubmissionModule,
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

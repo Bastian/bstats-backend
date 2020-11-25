@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConnectionService } from '../../database/connection.service';
 import { RedisService } from './interfaces/redis-service.interface';
-import assert from 'assert';
 import { assertIsDefined } from '../../assertions';
 
 @Injectable()

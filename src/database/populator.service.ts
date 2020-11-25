@@ -1609,7 +1609,7 @@ export class PopulatorService {
      * @returns {Function}
      */
     function getCallbackFunction(text: string, customText?: boolean) {
-      return function (err, res) {
+      return function (err) {
         if (err) {
           console.error(err);
         } else {
