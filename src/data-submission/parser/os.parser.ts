@@ -5,7 +5,7 @@ import {
   SubmitDataPluginDto,
 } from '../dto/submit-data.dto';
 import { Parser } from './interfaces/parser.interface';
-import { DefaultChart } from '../../charts/interfaces/default-chart.interface';
+import { DefaultChart } from '../../charts/interfaces/charts/default-chart.interface';
 
 @Injectable()
 export class OsParser implements Parser {

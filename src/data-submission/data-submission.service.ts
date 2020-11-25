@@ -11,15 +11,15 @@ import {
   isHardcodedParser,
   isNameInRequestParser,
   isPredefinedValueParser,
-} from '../charts/interfaces/default-chart.interface';
-import { isSimplePieChart } from '../charts/interfaces/single-pie-chart.interface';
-import { isSimpleMapDataChart } from '../charts/interfaces/simple-map-chart.interface';
-import { isSingleLineChart } from '../charts/interfaces/single-line-chart.interface';
+} from '../charts/interfaces/charts/default-chart.interface';
+import { isSimplePieChart } from '../charts/interfaces/charts/single-pie-chart.interface';
+import { isSimpleMapDataChart } from '../charts/interfaces/charts/simple-map-chart.interface';
+import { isSingleLineChart } from '../charts/interfaces/charts/single-line-chart.interface';
 import { ServicesService } from '../services/services.service';
 import { Service } from '../services/interfaces/service.interface';
 import { ChartsService } from '../charts/charts.service';
-import { isDrilldownPieChart } from '../charts/interfaces/drilldown-pie-chart.interface';
-import { isAdvancedPieChart } from '../charts/interfaces/advanced-pie-chart.interface';
+import { isDrilldownPieChart } from '../charts/interfaces/charts/drilldown-pie-chart.interface';
+import { isAdvancedPieChart } from '../charts/interfaces/charts/advanced-pie-chart.interface';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
 import { OsParser } from './parser/os.parser';
 import { JavaVersionParser } from './parser/java-version.parser';

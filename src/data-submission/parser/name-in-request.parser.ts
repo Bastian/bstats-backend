@@ -10,10 +10,10 @@ import {
   isNameInRequestBoolParser,
   isNameInRequestNumberParser,
   isNameInRequestParser,
-} from '../../charts/interfaces/default-chart.interface';
-import { isSimplePieChart } from '../../charts/interfaces/single-pie-chart.interface';
-import { isSimpleMapDataChart } from '../../charts/interfaces/simple-map-chart.interface';
-import { isSingleLineChart } from '../../charts/interfaces/single-line-chart.interface';
+} from '../../charts/interfaces/charts/default-chart.interface';
+import { isSimplePieChart } from '../../charts/interfaces/charts/single-pie-chart.interface';
+import { isSimpleMapDataChart } from '../../charts/interfaces/charts/simple-map-chart.interface';
+import { isSingleLineChart } from '../../charts/interfaces/charts/single-line-chart.interface';
 
 @Injectable()
 export class NameInRequestParser implements Parser {

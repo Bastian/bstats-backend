@@ -8,7 +8,7 @@ import { Parser } from './interfaces/parser.interface';
 import {
   DefaultChart,
   isPredefinedValueParser,
-} from '../../charts/interfaces/default-chart.interface';
+} from '../../charts/interfaces/charts/default-chart.interface';
 
 @Injectable()
 export class PredefinedValueParser implements Parser {

@@ -1,5 +1,5 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
-import { Chart } from './interfaces/chart.interface';
+import { Chart } from './interfaces/charts/chart.interface';
 import { ChartsService } from './charts.service';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
 

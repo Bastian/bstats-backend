@@ -1,4 +1,4 @@
-import { DefaultChart } from '../../charts/interfaces/default-chart.interface';
+import { DefaultChart } from '../../charts/interfaces/charts/default-chart.interface';
 
 export interface Software {
   id: number;

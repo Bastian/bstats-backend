@@ -3,7 +3,7 @@ import {
   SubmitDataDto,
   SubmitDataPluginDto,
 } from '../../dto/submit-data.dto';
-import { DefaultChart } from '../../../charts/interfaces/default-chart.interface';
+import { DefaultChart } from '../../../charts/interfaces/charts/default-chart.interface';
 
 export interface Parser {
   parse: (

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Chart } from './interfaces/chart.interface';
+import { Chart } from './interfaces/charts/chart.interface';
 import { RedisChartsService } from './redis-charts/redis-charts.service';
 
 @Injectable()

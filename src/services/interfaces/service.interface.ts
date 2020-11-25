@@ -1,4 +1,4 @@
-import { Chart } from '../../charts/interfaces/chart.interface';
+import { Chart } from '../../charts/interfaces/charts/chart.interface';
 
 export interface Service {
   id: number;
