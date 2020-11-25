@@ -26,7 +26,7 @@ $ npm run start:prod
 ## Redis
 
 The bStats backend requires a running Redis instance or cluster.
-For local development, you can start a Redis instance with Docker Compose by running `docker compose up`.
+For local development, you can start a Redis instance with Docker Compose by running `docker-compose up`.
 
 If you want to provide your own Redis instance or cluster (e.g., for production), you can configure Redis with the
 following environment variables:
