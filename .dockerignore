@@ -1,0 +1,13 @@
+# We use a white-list approach here, so ignore everything and then make exceptions
+*
+
+!src/*
+!.env
+!.eslintrc.js
+!.prettierrc
+!Dockerfile
+!nest-cli.json
+!package*.json
+!README.md
+!tsconfig.build.json
+!tsconfig.json

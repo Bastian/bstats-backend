@@ -8,3 +8,13 @@ services:
     volumes:
       - './volume/redis/redis-data:/data'
       - './volume/redis/redis.conf:/usr/local/etc/redis/redis.conf'
+  app:
+    build: "."
+    ports:
+      - "3001:3001"
+    depends_on:
+      - "redis"
+    environment:
+      REDIS_HOST: redis
+    volumes:
+    - "./service-account-file.json:/app/service-account-file.json"

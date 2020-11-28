@@ -26,7 +26,7 @@ $ npm run start:prod
 ## Redis
 
 The bStats backend requires a running Redis instance or cluster.
-For local development, you can start a Redis instance with Docker Compose by running `docker-compose up`.
+For local development, you can start a Redis instance with Docker Compose by running `docker-compose up --scale app=0`.
 
 If you want to provide your own Redis instance or cluster (e.g., for production), you can configure Redis with the
 following environment variables:
@@ -48,3 +48,10 @@ Thus, you have to create a [Firebase](https://firebase.google.com/) project and 
 | GOOGLE_APPLICATION_CREDENTIALS | ./service-account-file.json | The path to your service account file (Can be downloaded from the Firebase Console) |
 | FIREBASE_DATABASE_NAME         | bstats-cfca9                | The id of your firebase project |
 
+
+## Docker Compose
+
+The Docker Compose file allows you to start both the Redis server and the bStats backend itself.
+You can simply run `docker-compose up` to start both Redis and bStats.
+
+You can also use `docker-compose up --scale app=0` to only start Redis but not bStats (useful for development).
