@@ -29,11 +29,13 @@ import { BukkitServerSoftwareParser } from './parser/bukkit-server-software.pars
 import { BugeecordVersionParser } from './parser/bugeecord-version.parser';
 import { PredefinedValueParser } from './parser/predefined-value.parser';
 import { NameInRequestParser } from './parser/name-in-request.parser';
+import { RatelimitService } from './ratelimit.service';
 
 @Injectable()
 export class DataSubmissionService {
   constructor(
     private softwareService: SoftwareService,
+    private ratelimitService: RatelimitService,
     private servicesService: ServicesService,
     private dateUtilService: DateUtilService,
     private chartsService: ChartsService,
@@ -46,12 +48,22 @@ export class DataSubmissionService {
     private nameInRequestParser: NameInRequestParser,
   ) {}
 
-  async submitData(softwareUrl: string, submitDataDto: SubmitDataDto) {
+  async submitData(
+    softwareUrl: string,
+    submitDataDto: SubmitDataDto,
+    ip: string,
+  ) {
     const software = await this.softwareService.findOneByUrl(softwareUrl);
     assertIsDefinedOrThrowNotFound(software);
     const tms2000 = this.dateUtilService.dateToTms2000(new Date());
 
-    // TODO Ratelimiting
+    await this.ratelimitService.checkRatelimits(
+      submitDataDto,
+      software,
+      ip,
+      tms2000,
+    );
+
     // TODO Lookup location with ip
 
     const requestRandom = Math.random();
