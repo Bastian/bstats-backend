@@ -12,11 +12,13 @@ import { BugeecordVersionParser } from './parser/bugeecord-version.parser';
 import { PredefinedValueParser } from './parser/predefined-value.parser';
 import { NameInRequestParser } from './parser/name-in-request.parser';
 import { RatelimitService } from './ratelimit.service';
+import { ParserService } from './parser.service';
 
 @Module({
   providers: [
     DataSubmissionService,
     RatelimitService,
+    ParserService,
     OsParser,
     JavaVersionParser,
     BukkitMinecraftVersionParser,

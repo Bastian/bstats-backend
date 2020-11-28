@@ -8,9 +8,7 @@ import { SoftwareService } from '../software/software.service';
 import { DateUtilService } from '../charts/date-util.service';
 import {
   DefaultChart,
-  isHardcodedParser,
   isNameInRequestParser,
-  isPredefinedValueParser,
 } from '../charts/interfaces/charts/default-chart.interface';
 import { isSimplePieChart } from '../charts/interfaces/charts/single-pie-chart.interface';
 import { isSimpleMapDataChart } from '../charts/interfaces/charts/simple-map-chart.interface';
@@ -21,15 +19,9 @@ import { ChartsService } from '../charts/charts.service';
 import { isDrilldownPieChart } from '../charts/interfaces/charts/drilldown-pie-chart.interface';
 import { isAdvancedPieChart } from '../charts/interfaces/charts/advanced-pie-chart.interface';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
-import { OsParser } from './parser/os.parser';
-import { JavaVersionParser } from './parser/java-version.parser';
-import { Parser } from './parser/interfaces/parser.interface';
-import { BukkitMinecraftVersionParser } from './parser/bukkit-minecraft-version.parser';
-import { BukkitServerSoftwareParser } from './parser/bukkit-server-software.parser';
-import { BugeecordVersionParser } from './parser/bugeecord-version.parser';
-import { PredefinedValueParser } from './parser/predefined-value.parser';
-import { NameInRequestParser } from './parser/name-in-request.parser';
 import { RatelimitService } from './ratelimit.service';
+import { ParserService } from './parser.service';
+import { NameInRequestParser } from './parser/name-in-request.parser';
 
 @Injectable()
 export class DataSubmissionService {
@@ -39,12 +31,7 @@ export class DataSubmissionService {
     private servicesService: ServicesService,
     private dateUtilService: DateUtilService,
     private chartsService: ChartsService,
-    private osParser: OsParser,
-    private javaVersionParser: JavaVersionParser,
-    private bukkitMinecraftVersionParser: BukkitMinecraftVersionParser,
-    private bukkitServerSoftwareParser: BukkitServerSoftwareParser,
-    private bugeecordVersionParser: BugeecordVersionParser,
-    private predefinedValueParser: PredefinedValueParser,
+    private parserService: ParserService,
     private nameInRequestParser: NameInRequestParser,
   ) {}
 
@@ -80,7 +67,8 @@ export class DataSubmissionService {
         }
       }
 
-      this.findParser(chart)
+      this.parserService
+        .findParser(chart)
         ?.parse(chart, submitDataDto, null, requestRandom)
         ?.forEach((c) => defaultGlobalCharts.push(c));
     }
@@ -294,32 +282,5 @@ export class DataSubmissionService {
       });
 
     await Promise.all(promises);
-  }
-
-  private findParser(chart: DefaultChart): Parser | null {
-    if (isPredefinedValueParser(chart.requestParser)) {
-      return this.predefinedValueParser;
-    }
-
-    if (isHardcodedParser(chart.requestParser)) {
-      switch (chart.requestParser.useHardcodedParser) {
-        case 'os':
-          return this.osParser;
-        case 'javaVersion':
-          return this.javaVersionParser;
-        case 'bukkitMinecraftVersion':
-          return this.bukkitMinecraftVersionParser;
-        case 'bukkitServerSoftware':
-          return this.bukkitServerSoftwareParser;
-        case 'bungeecordVersion':
-          return this.bugeecordVersionParser;
-      }
-    }
-
-    if (isNameInRequestParser(chart.requestParser)) {
-      return this.nameInRequestParser;
-    }
-
-    return null;
   }
 }
