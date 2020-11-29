@@ -1,6 +1,7 @@
 import { Body, Controller, Ip, Param, Post } from '@nestjs/common';
 import { SubmitDataDto } from './dto/submit-data.dto';
 import { DataSubmissionService } from './data-submission.service';
+import { IpAddress } from '../ip-address.decorator';
 
 @Controller('submitData')
 export class DataSubmissionController {
@@ -15,7 +16,7 @@ export class DataSubmissionController {
   async submitData(
     @Param('softwareUrl') softwareUrl: string,
     @Body() submitDataDto: SubmitDataDto,
-    @Ip() ip: string,
+    @IpAddress() ip: string,
   ) {
     return this.dataSubmissionService.submitData(
       softwareUrl,

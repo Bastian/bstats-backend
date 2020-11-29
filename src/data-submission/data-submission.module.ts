@@ -13,12 +13,14 @@ import { PredefinedValueParser } from './parser/predefined-value.parser';
 import { NameInRequestParser } from './parser/name-in-request.parser';
 import { RatelimitService } from './ratelimit.service';
 import { ParserService } from './parser.service';
+import { GeoIpService } from './geo-ip.service';
 
 @Module({
   providers: [
     DataSubmissionService,
     RatelimitService,
     ParserService,
+    GeoIpService,
     OsParser,
     JavaVersionParser,
     BukkitMinecraftVersionParser,

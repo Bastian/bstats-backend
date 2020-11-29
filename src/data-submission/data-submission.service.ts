@@ -22,12 +22,14 @@ import { assertIsDefinedOrThrowNotFound } from '../assertions';
 import { RatelimitService } from './ratelimit.service';
 import { ParserService } from './parser.service';
 import { NameInRequestParser } from './parser/name-in-request.parser';
+import { GeoIpService } from './geo-ip.service';
 
 @Injectable()
 export class DataSubmissionService {
   constructor(
     private softwareService: SoftwareService,
     private ratelimitService: RatelimitService,
+    private geoIpService: GeoIpService,
     private servicesService: ServicesService,
     private dateUtilService: DateUtilService,
     private chartsService: ChartsService,
@@ -51,7 +53,7 @@ export class DataSubmissionService {
       tms2000,
     );
 
-    // TODO Lookup location with ip
+    const [countryName, geo] = this.geoIpService.lookupIp(ip) ?? [null, null];
 
     const requestRandom = Math.random();
 
@@ -69,7 +71,7 @@ export class DataSubmissionService {
 
       this.parserService
         .findParser(chart)
-        ?.parse(chart, submitDataDto, null, requestRandom)
+        ?.parse(chart, submitDataDto, null, requestRandom, countryName)
         ?.forEach((c) => defaultGlobalCharts.push(c));
     }
 
@@ -270,10 +272,12 @@ export class DataSubmissionService {
           ) {
             return;
           }
-          const { value } = customChartData.data;
+          let { value } = customChartData.data;
           if (value === 'AUTO') {
-            // TODO Set value to current country
-            return;
+            value = geo?.country;
+            if (!value) {
+              return;
+            }
           }
           return this.chartsService.updateMapData(chart.id, tms2000, value, 1);
         } else {

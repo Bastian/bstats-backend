@@ -17,14 +17,14 @@ export class PredefinedValueParser implements Parser {
     submitDataDto: SubmitDataDto,
     submitDataPluginDto: SubmitDataPluginDto | null,
     requestRandom: number,
+    countryName: string | null,
   ): SubmitDataCustomChartDto[] | null {
     if (!isPredefinedValueParser(chart.requestParser)) {
       return null;
     }
     let value = chart.requestParser.predefinedValue;
     if (value === '%country.name%') {
-      // TODO Get country name
-      value = 'Unknown';
+      value = countryName ?? 'Unknown';
     }
     return [
       new SubmitDataCustomChartDto(chart.idCustom, { value }, requestRandom),

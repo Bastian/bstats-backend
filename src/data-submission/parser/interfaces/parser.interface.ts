@@ -11,5 +11,6 @@ export interface Parser {
     submitDataDto: SubmitDataDto,
     submitDataPluginDto: SubmitDataPluginDto | null,
     requestRandom: number,
+    countryName: string | null,
   ) => SubmitDataCustomChartDto[] | null;
 }
