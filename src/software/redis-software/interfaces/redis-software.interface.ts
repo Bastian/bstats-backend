@@ -4,8 +4,8 @@ export interface RedisSoftware {
   name: string;
   url: string;
   globalPlugin: number | null;
-  metricsClass: string;
-  examplePlugin: string;
+  metricsClass: string | null;
+  examplePlugin: string | null;
   maxRequestsPerIp: number;
   defaultCharts: DefaultChart[];
   hideInPluginList: boolean;

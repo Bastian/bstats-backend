@@ -5,8 +5,8 @@ export interface Software {
   name: string;
   url: string;
   globalPlugin: number | null | undefined;
-  metricsClass: string;
-  examplePlugin: string;
+  metricsClass: string | null;
+  examplePlugin: string | null;
   maxRequestsPerIp: number;
   defaultCharts: DefaultChart[];
   hideInPluginList: boolean;

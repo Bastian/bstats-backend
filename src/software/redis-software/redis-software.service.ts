@@ -22,14 +22,11 @@ export class RedisSoftwareService {
       .getRedis()
       .hmget(`software:${id}`, fields);
 
-    if (response == null) {
+    if (response == null || response[0] == null) {
       return null;
     }
 
-    assertIsDefined(response[0]);
     assertIsDefined(response[1]);
-    assertIsDefined(response[3]);
-    assertIsDefined(response[4]);
     assertIsDefined(response[5]);
     assertIsDefined(response[6]);
 
