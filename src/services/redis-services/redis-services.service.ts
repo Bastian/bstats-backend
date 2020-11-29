@@ -49,7 +49,7 @@ export class RedisServicesService {
   ): Promise<number | null> {
     const serviceId = await this.connectionService
       .getRedis()
-      .get(`plugins.index.id.url+name:${softwareUrl}.${name}`);
+      .get(`plugins.index.id.url+name:${softwareUrl}.${name.toLowerCase()}`);
 
     if (serviceId == null) {
       return null;
