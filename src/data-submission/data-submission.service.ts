@@ -179,6 +179,15 @@ export class DataSubmissionService {
         if (chart === null) {
           return;
         }
+
+        if (
+          chart.isDefault &&
+          customChartData.requestRandom !== requestRandom
+        ) {
+          // The service is trying to trick us and sent a default chart as a custom chart
+          return;
+        }
+
         if (isSimplePieChart(chart)) {
           if (
             typeof customChartData.data !== 'object' ||
