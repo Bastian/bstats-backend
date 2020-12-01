@@ -15,7 +15,19 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: npm run build --if-present
-      - run: npm lint
+      - run: npm run build
+      - run: npm run lint
         env:
           CI: true
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        # https://github.com/elgohr/Publish-Docker-Github-Action
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: Bastian/bstats-backend/bstats-backend
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
