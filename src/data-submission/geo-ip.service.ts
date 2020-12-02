@@ -3,7 +3,7 @@ import * as geoip from 'geoip-lite';
 
 @Injectable()
 export class GeoIpService {
-  lookupIp(ip: string): [countryName: string | null, geo: any] | null {
+  lookupIp(ip: string): [countryName: string | null, geo: geoip.Lookup] | null {
     const geo = geoip.lookup(ip);
     if (geo === null) {
       return null;

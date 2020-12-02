@@ -14,6 +14,12 @@ import { NameInRequestParser } from './parser/name-in-request.parser';
 import { RatelimitService } from './ratelimit.service';
 import { ParserService } from './parser.service';
 import { GeoIpService } from './geo-ip.service';
+import { SimplePieChartDataProcessor } from './data-processors/simple-pie-chart-data.processor';
+import { AdvancedPieChartDataProcessor } from './data-processors/advanced-pie-chart-data.processor';
+import { DrilldownPieChartDataProcessor } from './data-processors/drilldown-pie-chart-data.processor';
+import { SingleLineChartDataProcessor } from './data-processors/single-line-chart-data.processor';
+import { SimpleMapChartDataProcessor } from './data-processors/simple-map-chart-data.processor';
+import { ChartDataProcessorService } from './chart-data-processor.service';
 
 @Module({
   providers: [
@@ -28,6 +34,12 @@ import { GeoIpService } from './geo-ip.service';
     BugeecordVersionParser,
     PredefinedValueParser,
     NameInRequestParser,
+    ChartDataProcessorService,
+    SimplePieChartDataProcessor,
+    AdvancedPieChartDataProcessor,
+    DrilldownPieChartDataProcessor,
+    SingleLineChartDataProcessor,
+    SimpleMapChartDataProcessor,
   ],
   controllers: [DataSubmissionController],
   imports: [SoftwareModule, ServicesModule, ChartsModule],

@@ -10,19 +10,15 @@ import {
   DefaultChart,
   isNameInRequestParser,
 } from '../charts/interfaces/charts/default-chart.interface';
-import { isSimplePieChart } from '../charts/interfaces/charts/single-pie-chart.interface';
-import { isSimpleMapDataChart } from '../charts/interfaces/charts/simple-map-chart.interface';
-import { isSingleLineChart } from '../charts/interfaces/charts/single-line-chart.interface';
 import { ServicesService } from '../services/services.service';
 import { Service } from '../services/interfaces/service.interface';
 import { ChartsService } from '../charts/charts.service';
-import { isDrilldownPieChart } from '../charts/interfaces/charts/drilldown-pie-chart.interface';
-import { isAdvancedPieChart } from '../charts/interfaces/charts/advanced-pie-chart.interface';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
 import { RatelimitService } from './ratelimit.service';
 import { ParserService } from './parser.service';
 import { NameInRequestParser } from './parser/name-in-request.parser';
 import { GeoIpService } from './geo-ip.service';
+import { ChartDataProcessorService } from './chart-data-processor.service';
 
 @Injectable()
 export class DataSubmissionService {
@@ -35,6 +31,7 @@ export class DataSubmissionService {
     private chartsService: ChartsService,
     private parserService: ParserService,
     private nameInRequestParser: NameInRequestParser,
+    private chartDataProcessorService: ChartDataProcessorService,
   ) {}
 
   async submitData(
@@ -188,110 +185,9 @@ export class DataSubmissionService {
           return;
         }
 
-        if (isSimplePieChart(chart)) {
-          if (
-            typeof customChartData.data !== 'object' ||
-            typeof customChartData.data.value !== 'string'
-          ) {
-            return;
-          }
-          return this.chartsService.updatePieData(
-            chart.id,
-            tms2000,
-            customChartData.data.value,
-            1,
-          );
-        } else if (isAdvancedPieChart(chart)) {
-          if (
-            typeof customChartData.data !== 'object' ||
-            typeof customChartData.data.values !== 'object'
-          ) {
-            return;
-          }
-          const promises: Promise<unknown>[] = [];
-          for (const value in customChartData.data.values) {
-            if (
-              !customChartData.data.values.hasOwnProperty(value) ||
-              typeof customChartData.data.values[value] !== 'number'
-            ) {
-              continue;
-            }
-            promises.push(
-              this.chartsService.updatePieData(
-                chart.id,
-                tms2000,
-                value,
-                customChartData.data.values[value],
-              ),
-            );
-          }
-          return Promise.all(promises);
-        } else if (isDrilldownPieChart(chart)) {
-          if (
-            typeof customChartData.data !== 'object' ||
-            typeof customChartData.data.values !== 'object'
-          ) {
-            return;
-          }
-          const promises: Promise<unknown>[] = [];
-          for (const value in customChartData.data.values) {
-            if (
-              !customChartData.data.values.hasOwnProperty(value) ||
-              typeof customChartData.data.values[value] !== 'object'
-            ) {
-              continue;
-            }
-            promises.push(
-              this.chartsService.updateDrilldownPieData(
-                chart.id,
-                tms2000,
-                value,
-                customChartData.data.values[value],
-              ),
-            );
-          }
-          return Promise.all(promises);
-        } else if (isSingleLineChart(chart)) {
-          if (
-            typeof customChartData.data !== 'object' ||
-            typeof customChartData.data.value !== 'number'
-          ) {
-            return;
-          }
-          let { value } = customChartData.data;
-          if (chart.data.filter !== undefined && chart.data.filter.enabled) {
-            const maxValue = chart.data.filter.maxValue;
-            const minValue = chart.data.filter.minValue;
-            if (typeof maxValue === 'number' && value > maxValue) {
-              value = maxValue;
-            } else if (typeof minValue === 'number' && value <= minValue) {
-              value = minValue;
-            }
-          }
-          return this.chartsService.updateLineChartData(
-            chart.id,
-            tms2000,
-            '1',
-            value,
-          );
-        } else if (isSimpleMapDataChart(chart)) {
-          if (
-            typeof customChartData.data !== 'object' ||
-            typeof customChartData.data.value !== 'string'
-          ) {
-            return;
-          }
-          let { value } = customChartData.data;
-          if (value === 'AUTO') {
-            value = geo?.country;
-            if (!value) {
-              return;
-            }
-          }
-          return this.chartsService.updateMapData(chart.id, tms2000, value, 1);
-        } else {
-          return;
-        }
+        await this.chartDataProcessorService
+          .findChartDataProcessor(chart)
+          ?.processData(chart, customChartData, tms2000, geo);
       });
 
     await Promise.all(promises);
