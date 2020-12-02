@@ -10,11 +10,12 @@ import { isAdvancedPieChart } from '../charts/interfaces/charts/advanced-pie-cha
 import { isDrilldownPieChart } from '../charts/interfaces/charts/drilldown-pie-chart.interface';
 import { isSingleLineChart } from '../charts/interfaces/charts/single-line-chart.interface';
 import { isSimpleMapDataChart } from '../charts/interfaces/charts/simple-map-chart.interface';
+import { SimplePieChartDataProcessor } from './data-processors/simple-pie-chart-data.processor';
 
 @Injectable()
 export class ChartDataProcessorService {
   constructor(
-    private simplePieChartDataProcessor: SimpleMapChartDataProcessor,
+    private simplePieChartDataProcessor: SimplePieChartDataProcessor,
     private advancedPieChartDataProcessor: AdvancedPieChartDataProcessor,
     private drilldownPieChartDataProcessor: DrilldownPieChartDataProcessor,
     private singleLineChartDataProcessor: SingleLineChartDataProcessor,
