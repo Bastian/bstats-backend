@@ -69,6 +69,9 @@ export class LegacyController {
     assertIsDefinedOrThrowNotFound(chart);
     const chartData = await this.chartsService.findData(chart.id, maxElements);
     assertIsDefinedOrThrowNotFound(chartData);
+    if (chart.type === 'single_linechart') {
+      return (chartData as []).reverse();
+    }
     return chartData;
   }
 }
