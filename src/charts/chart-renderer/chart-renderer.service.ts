@@ -113,10 +113,18 @@ export class ChartRendererService {
     );
   }
 
+  private static canvasRenderServices: {
+    [resolution: string]: CanvasRenderService;
+  } = {};
+
   private static getCanvasRenderService(
     width: number,
     height: number,
   ): CanvasRenderService {
+    if (ChartRendererService.canvasRenderServices[`${width}x${height}`]) {
+      return ChartRendererService.canvasRenderServices[`${width}x${height}`];
+    }
+
     const chartCallback = (ChartJS) => {
       ChartJS.defaults.global.elements.rectangle.borderWidth = 2;
       ChartJS.plugins.register({
@@ -134,6 +142,17 @@ export class ChartRendererService {
       });
     };
 
-    return new CanvasRenderService(width, height, chartCallback, 'svg');
+    const canvasRenderService = new CanvasRenderService(
+      width,
+      height,
+      chartCallback,
+      'svg',
+    );
+
+    ChartRendererService.canvasRenderServices[
+      `${width}x${height}`
+    ] = canvasRenderService;
+
+    return canvasRenderService;
   }
 }
