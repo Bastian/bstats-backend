@@ -46,4 +46,11 @@ export class ServicesController {
     assertIsDefinedOrThrowNotFound(service);
     return service;
   }
+
+  @Get('legacy/:id')
+  async findOneLegacy(@Param('id', ParseIntPipe) id: number): Promise<any> {
+    const service = await this.servicesService.findOne(id, true);
+    assertIsDefinedOrThrowNotFound(service);
+    return {};
+  }
 }

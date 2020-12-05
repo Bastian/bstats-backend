@@ -5,6 +5,7 @@ import { FirebaseAuthMiddleware } from './auth/firebase-auth.middleware';
 import { SoftwareModule } from './software/software.module';
 import { ChartsModule } from './charts/charts.module';
 import { DataSubmissionModule } from './data-submission/data-submission.module';
+import { LegacyModule } from './legacy/legacy.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { DataSubmissionModule } from './data-submission/data-submission.module';
     SoftwareModule,
     ChartsModule,
     DataSubmissionModule,
+    LegacyModule,
   ],
 })
 export class AppModule {
