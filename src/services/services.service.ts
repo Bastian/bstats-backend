@@ -11,6 +11,10 @@ export class ServicesService {
     private chartsService: ChartsService,
   ) {}
 
+  async findAllServiceIds(): Promise<number[]> {
+    return this.redisServicesService.findAllServiceIds();
+  }
+
   async findAll(includeCharts = false): Promise<Service[]> {
     const serviceIds = await this.redisServicesService.findAllServiceIds();
     const services = await Promise.all(

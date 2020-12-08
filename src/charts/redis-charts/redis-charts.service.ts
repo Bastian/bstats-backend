@@ -145,6 +145,10 @@ export class RedisChartsService {
     amount: number,
     tms2000Last: number = this.dateUtilService.dateToTms2000(new Date()) - 1,
   ): Promise<SingleLineChartData | null> {
+    if (amount <= 0) {
+      return [];
+    }
+
     const lastTimestamp = this.dateUtilService
       .tms2000ToDate(tms2000Last)
       .getTime();
@@ -174,6 +178,45 @@ export class RedisChartsService {
     }
 
     return data;
+  }
+
+  async getFullLineChartData(
+    id: number,
+    line: string,
+  ): Promise<[number, number | 'ignored'][] | null> {
+    const response = await this.connectionService
+      .getRedis()
+      .hgetall(`data:${id}.${line}`);
+
+    if (response === null) {
+      return null;
+    }
+
+    const data: [number, number | 'ignored'][] = [];
+    for (const key of Object.keys(response)) {
+      const timestamp = parseInt(key);
+      if (isNaN(timestamp)) {
+        continue;
+      }
+      if (response[key] === 'ignored') {
+        data.push([timestamp, 'ignored']);
+      } else {
+        const value = parseInt(response[key]);
+        if (isNaN(value)) {
+          continue;
+        }
+        data.push([timestamp, value]);
+      }
+    }
+
+    return data;
+  }
+
+  async deleteLineChartData(id: number, line: string, timestamps: number[]) {
+    await this.connectionService.getRedis().hdel(
+      `data:${id}.${line}`,
+      timestamps.map((timestamp) => timestamp.toString()),
+    );
   }
 
   async updateDrilldownPieData(
