@@ -37,7 +37,7 @@ export class DataArchiverService {
     const serviceIdBatch = allServiceIds.filter(
       (serviceId) =>
         serviceId % (totalShards * this.BATCH_COUNT) ===
-        shardNumber * totalShards + this.counter,
+        shardNumber * this.BATCH_COUNT + this.counter,
     );
 
     for (const serviceId of serviceIdBatch) {
