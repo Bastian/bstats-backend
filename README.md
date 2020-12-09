@@ -40,7 +40,7 @@ following environment variables:
 
 ## Firebase
 
-bStats uses Firebase Auth for authentication.
+bStats uses Firebase Auth for authentication and Firestore to store historic line chart data.
 Thus, you have to create a [Firebase](https://firebase.google.com/) project and set the following environment variables:
 
 | Variable                       | Default Value               | Description |
@@ -48,6 +48,18 @@ Thus, you have to create a [Firebase](https://firebase.google.com/) project and 
 | GOOGLE_APPLICATION_CREDENTIALS | ./service-account-file.json | The path to your service account file (Can be downloaded from the Firebase Console) |
 | FIREBASE_DATABASE_NAME         | bstats-cfca9                | The id of your firebase project |
 
+## Sharding
+
+If multiple instance of the bStats backend are running as a cluster, you must configure the following environment variables:
+
+| Variable     | Default Value | Description |
+| -------------| ------------- | ----------- |
+| SHARD_NUMBER | 0             | The number of the current shard, starting at 0 |
+| TOTAL_SHARDS | 1             | The total number of shards |
+
+These sharding information is used to divide the load of periodically moving line chart data from Redis into Firestore.
+If you do not set the variables, the application will still work properly but have a bottleneck that prevents it from
+properly scaling horizontally.
 
 ## Docker Compose
 
