@@ -46,7 +46,7 @@ Thus, you have to create a [Firebase](https://firebase.google.com/) project and 
 | Variable                       | Default Value               | Description |
 | ------------------------------ | --------------------------- | ----------- |
 | GOOGLE_APPLICATION_CREDENTIALS | ./service-account-file.json | The path to your service account file (Can be downloaded from the Firebase Console) |
-| FIREBASE_DATABASE_NAME         | bstats-cfca9                | The id of your firebase project |
+| FIREBASE_DATABASE_NAME         | bstats-testing              | The id of your firebase project |
 
 ## Sharding
 
