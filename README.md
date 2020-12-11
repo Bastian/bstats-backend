@@ -67,3 +67,33 @@ The Docker Compose file allows you to start both the Redis server and the bStats
 You can simply run `docker-compose up` to start both Redis and bStats.
 
 You can also use `docker-compose up --scale app=0` to only start Redis but not bStats (useful for development).
+
+## Bankruptcy Protection
+
+SaaS with a pay-as-you-go model like Firestore is very scary because a single mistake (e.g., an infinite loop) can
+easily accumulate an enormous amount of writes or reads that may cost you a shit ton of money in a very short time.
+Noone likes to go to bed and
+[wake up with a $30,356.56 dollar bill](https://hackernoon.com/how-we-spent-30k-usd-in-firebase-in-less-than-72-hours-307490bd24d)
+the next day because of a programming error or some idiot starting a DDoS attack on your service.
+
+To prevent incidents like these, you can set the following environment variables that limit the amount of writes and
+reads that bStats performs per 30 minutes:
+
+| Variable                            | Default Value |
+| ------------------------------------| ------------- |
+| MAX_FIRESTORE_READS_PER_30_MINUTES  | 150000        |
+| MAX_FIRESTORE_WRITES_PER_30_MINUTES | 150000        |
+
+The limits should be set to something, that's high enough to not trigger any false positives but still low enough to
+protect you from ending up on the street because you had to sell your house. The default settings allow for a maximum
+spending of $0.36 per 30 minutes which would be $17.28 per day or ~$520 per month if you didn't notice the bug.
+
+**Disclaimer**: Unfortunately, Firebase does not allow you to set any limits (why?!?), that's why this limit is enforced
+by incrementing a number in Redis and manually checking it on every write or read. This is not optimal for two reasons:
+1. This is a bottleneck because it's using a single field in Redis and thus limits horizontal scaling. However, this is
+   more of a theoretical limit because Redis is super fast and can easily handle over 100k Ops/Second. If bStats ever
+   grows large enough that it can afford 100k Firestore Reads ($155k / month) or Writes ($466k / month) per second, we
+   can discuss this issue again in my mansion.
+2. This is a more serious issue: Developers are humans, too. This means that it can be forgotten to perform this
+   manual check and thus accidentally bypass the ratelimiting. However, as long as Google does not add native support
+   for ratelimiting Firestore reads and writes, this is better than nothing.

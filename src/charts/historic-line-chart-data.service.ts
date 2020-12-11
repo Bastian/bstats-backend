@@ -4,6 +4,7 @@ import { DateUtilService } from './date-util.service';
 import { RedisChartsService } from './redis-charts/redis-charts.service';
 import { SingleLineChartData } from './interfaces/data/single-line-chart-data.interface';
 import { ConnectionService } from '../database/connection.service';
+import { FirestoreRatelimiterService } from '../database/firestore-ratelimiter.service';
 
 @Injectable()
 export class HistoricLineChartDataService {
@@ -11,6 +12,7 @@ export class HistoricLineChartDataService {
     private dateUtilService: DateUtilService,
     private redisChartsService: RedisChartsService,
     private connectionService: ConnectionService,
+    private firestoreRatelimiterService: FirestoreRatelimiterService,
   ) {}
 
   private getFirestoreDocument(
@@ -35,6 +37,7 @@ export class HistoricLineChartDataService {
       new Date(timestamp),
     );
 
+    await this.firestoreRatelimiterService.checkRatelimitAndIncr('write');
     await this.getFirestoreDocument(id, tms2000Div1000, line).set(
       {
         chartId: id,
@@ -71,6 +74,7 @@ export class HistoricLineChartDataService {
     );
 
     for (const tms2000Div1000 of Object.keys(dataGroupedByTms2000Div1000)) {
+      await this.firestoreRatelimiterService.checkRatelimitAndIncr('write');
       await this.getFirestoreDocument(id, parseInt(tms2000Div1000), line).set(
         {
           chartId: id,
@@ -122,6 +126,7 @@ export class HistoricLineChartDataService {
     const data: SingleLineChartData = [];
 
     for (const tms2000Div1000 of tms2000Div1000sToFetch) {
+      await this.firestoreRatelimiterService.checkRatelimitAndIncr('read');
       const document = await this.getFirestoreDocument(
         id,
         tms2000Div1000,
