@@ -8,7 +8,7 @@ import { OsParser } from './parser/os.parser';
 import { JavaVersionParser } from './parser/java-version.parser';
 import { BukkitMinecraftVersionParser } from './parser/bukkit-minecraft-version.parser';
 import { BukkitServerSoftwareParser } from './parser/bukkit-server-software.parser';
-import { BugeecordVersionParser } from './parser/bugeecord-version.parser';
+import { BungeecordVersionParser } from './parser/bungeecord-version.parser';
 import { PredefinedValueParser } from './parser/predefined-value.parser';
 import { NameInRequestParser } from './parser/name-in-request.parser';
 import { RatelimitService } from './ratelimit.service';
@@ -31,7 +31,7 @@ import { ChartDataProcessorService } from './chart-data-processor.service';
     JavaVersionParser,
     BukkitMinecraftVersionParser,
     BukkitServerSoftwareParser,
-    BugeecordVersionParser,
+    BungeecordVersionParser,
     PredefinedValueParser,
     NameInRequestParser,
     ChartDataProcessorService,

@@ -8,7 +8,7 @@ import { Parser } from './interfaces/parser.interface';
 import { DefaultChart } from '../../charts/interfaces/charts/default-chart.interface';
 
 @Injectable()
-export class BugeecordVersionParser implements Parser {
+export class BungeecordVersionParser implements Parser {
   parse(
     chart: DefaultChart,
     submitDataDto: SubmitDataDto,

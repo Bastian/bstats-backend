@@ -10,7 +10,7 @@ import { OsParser } from './parser/os.parser';
 import { JavaVersionParser } from './parser/java-version.parser';
 import { BukkitMinecraftVersionParser } from './parser/bukkit-minecraft-version.parser';
 import { BukkitServerSoftwareParser } from './parser/bukkit-server-software.parser';
-import { BugeecordVersionParser } from './parser/bugeecord-version.parser';
+import { BungeecordVersionParser } from './parser/bungeecord-version.parser';
 import { PredefinedValueParser } from './parser/predefined-value.parser';
 import { NameInRequestParser } from './parser/name-in-request.parser';
 
@@ -21,7 +21,7 @@ export class ParserService {
     private javaVersionParser: JavaVersionParser,
     private bukkitMinecraftVersionParser: BukkitMinecraftVersionParser,
     private bukkitServerSoftwareParser: BukkitServerSoftwareParser,
-    private bugeecordVersionParser: BugeecordVersionParser,
+    private bungeecordVersionParser: BungeecordVersionParser,
     private predefinedValueParser: PredefinedValueParser,
     private nameInRequestParser: NameInRequestParser,
   ) {}
@@ -42,7 +42,7 @@ export class ParserService {
         case 'bukkitServerSoftware':
           return this.bukkitServerSoftwareParser;
         case 'bungeecordVersion':
-          return this.bugeecordVersionParser;
+          return this.bungeecordVersionParser;
       }
     }
 
