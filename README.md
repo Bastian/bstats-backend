@@ -97,3 +97,7 @@ by incrementing a number in Redis and manually checking it on every write or rea
 2. This is a more serious issue: Developers are humans, too. This means that it can be forgotten to perform this
    manual check and thus accidentally bypass the ratelimiting. However, as long as Google does not add native support
    for ratelimiting Firestore reads and writes, this is better than nothing.
+
+## License
+
+This work is under exclusive copyright. You are not allowed to copy, distribute, or modify this work.
