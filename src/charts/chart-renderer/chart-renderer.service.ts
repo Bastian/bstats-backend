@@ -32,9 +32,7 @@ export class ChartRendererService {
         datasets: [
           {
             data: mapLineChartData(servers),
-            label:
-              servers[servers.length - 1][1].toLocaleString('en-US') +
-              ' Servers',
+            label: servers[0][1].toLocaleString('en-US') + ' Servers',
             borderColor: 'rgb(23, 150, 243)',
             backgroundColor: 'rgba(23, 150, 243, 0.6)',
             borderWidth: 2,
@@ -44,9 +42,7 @@ export class ChartRendererService {
           },
           {
             data: mapLineChartData(players),
-            label:
-              players[players.length - 1][1].toLocaleString('en-US') +
-              ' Players',
+            label: players[0][1].toLocaleString('en-US') + ' Players',
             borderColor: 'rgba(255,12,0,0.25)',
             backgroundColor: 'rgba(247, 114, 104, 1)',
             borderWidth: 2,
