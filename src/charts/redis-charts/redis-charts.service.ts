@@ -8,6 +8,7 @@ import { AdvancedPieChartData } from '../interfaces/data/advanced-pie-chart-data
 import { SimpleMapChartData } from '../interfaces/data/simple-map-chart-data.interface';
 import { SingleLineChartData } from '../interfaces/data/single-line-chart-data.interface';
 import { DrilldownPieChartData } from '../interfaces/data/drilldown-pie-chart-data.interface';
+import { BarChartData } from '../interfaces/data/bar-chart-data.interface';
 
 @Injectable()
 export class RedisChartsService {
@@ -296,5 +297,65 @@ export class RedisChartsService {
     }
 
     return data;
+  }
+
+  async updateBarChartData(
+    id: number,
+    tms2000: number,
+    values: { category: string; barValues: number[] }[],
+  ) {
+    const key = `data:${id}.${tms2000}`;
+
+    const pipeline = this.connectionService.getRedis().pipeline();
+    values
+      .flatMap(({ category, barValues }) =>
+        barValues.map<[string, number, number]>((barValue, barIndex) => [
+          category,
+          barValue,
+          barIndex,
+        ]),
+      )
+      .map(([category, barValue, barIndex]) =>
+        pipeline.hincrby(key, `${category}:${barIndex}`, barValue),
+      );
+    pipeline.expire(key, 60 * 61);
+    await pipeline.exec();
+  }
+
+  async getBarChartData(
+    id: number,
+    tms2000: number = this.dateUtilService.dateToTms2000(new Date()) - 1,
+  ): Promise<BarChartData | null> {
+    const key = `data:${id}.${tms2000}`;
+
+    const response = await this.connectionService.getRedis().hgetall(key);
+
+    if (response === null) {
+      return null;
+    }
+
+    const dataMap = new Map<string, number[]>();
+
+    for (const key of Object.keys(response)) {
+      const [category, barIndex] = key.split(':');
+      const barIndexNumber = parseInt(barIndex);
+      if (isNaN(barIndexNumber)) {
+        continue;
+      }
+
+      const barValue = parseInt(response[key]);
+      if (isNaN(barValue)) {
+        continue;
+      }
+
+      let data = dataMap.get(category);
+      if (data === undefined) {
+        data = [];
+        dataMap.set(category, data);
+      }
+      data[barIndexNumber] = (data[barIndexNumber] ?? 0) + barValue;
+    }
+
+    return Array.from(dataMap.entries(), ([name, data]) => ({ name, data }));
   }
 }

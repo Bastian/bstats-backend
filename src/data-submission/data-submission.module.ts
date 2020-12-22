@@ -20,6 +20,7 @@ import { DrilldownPieChartDataProcessor } from './data-processors/drilldown-pie-
 import { SingleLineChartDataProcessor } from './data-processors/single-line-chart-data.processor';
 import { SimpleMapChartDataProcessor } from './data-processors/simple-map-chart-data.processor';
 import { ChartDataProcessorService } from './chart-data-processor.service';
+import { BarChartDataProcessor } from './data-processors/bar-chart-data.processor';
 
 @Module({
   providers: [
@@ -40,6 +41,7 @@ import { ChartDataProcessorService } from './chart-data-processor.service';
     DrilldownPieChartDataProcessor,
     SingleLineChartDataProcessor,
     SimpleMapChartDataProcessor,
+    BarChartDataProcessor,
   ],
   controllers: [DataSubmissionController],
   imports: [SoftwareModule, ServicesModule, ChartsModule],

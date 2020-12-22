@@ -53,6 +53,9 @@ export class ChartsService {
       case 'simple_map':
       case 'advanced_map':
         return this.redisChartsService.getMapData(id);
+      case 'simple_bar':
+      case 'advanced_bar':
+        return this.redisChartsService.getBarChartData(id);
     }
 
     return null;
@@ -158,5 +161,13 @@ export class ChartsService {
       valueName,
       values,
     );
+  }
+
+  async updateBarChartData(
+    id: number,
+    tms2000: number,
+    values: { category: string; barValues: number[] }[],
+  ) {
+    return this.redisChartsService.updateBarChartData(id, tms2000, values);
   }
 }

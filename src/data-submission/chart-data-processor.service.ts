@@ -11,6 +11,8 @@ import { isDrilldownPieChart } from '../charts/interfaces/charts/drilldown-pie-c
 import { isSingleLineChart } from '../charts/interfaces/charts/single-line-chart.interface';
 import { isSimpleMapDataChart } from '../charts/interfaces/charts/simple-map-chart.interface';
 import { SimplePieChartDataProcessor } from './data-processors/simple-pie-chart-data.processor';
+import { isBarChart } from '../charts/interfaces/charts/advanced-bar-chart.interface';
+import { BarChartDataProcessor } from './data-processors/bar-chart-data.processor';
 
 @Injectable()
 export class ChartDataProcessorService {
@@ -20,6 +22,7 @@ export class ChartDataProcessorService {
     private drilldownPieChartDataProcessor: DrilldownPieChartDataProcessor,
     private singleLineChartDataProcessor: SingleLineChartDataProcessor,
     private simpleMapChartDataProcessor: SimpleMapChartDataProcessor,
+    private barChartDataProcessor: BarChartDataProcessor,
   ) {}
 
   findChartDataProcessor(chart: Chart): ChartDataProcessor | null {
@@ -33,6 +36,8 @@ export class ChartDataProcessorService {
       return this.singleLineChartDataProcessor;
     } else if (isSimpleMapDataChart(chart)) {
       return this.simpleMapChartDataProcessor;
+    } else if (isBarChart(chart)) {
+      return this.barChartDataProcessor;
     } else {
       return null;
     }
