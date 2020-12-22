@@ -100,4 +100,4 @@ by incrementing a number in Redis and manually checking it on every write or rea
 
 ## License
 
-This work is under exclusive copyright. You are not allowed to copy, distribute, or modify this work.
+This project is licensed under the [MIT License](/LICENSE).
