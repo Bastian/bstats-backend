@@ -4,13 +4,13 @@ import {
   Injectable,
   NestMiddleware,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import * as admin from 'firebase-admin';
 import { AuthenticatedUser } from './authenticated-user.interface';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
 @Injectable()
 export class FirebaseAuthMiddleware implements NestMiddleware {
-  async use(req: Request, res: Response, next: () => void) {
+  async use(req: FastifyRequest, res: FastifyReply, next: () => void) {
     const { authorization } = req.headers;
 
     if (!authorization) {
