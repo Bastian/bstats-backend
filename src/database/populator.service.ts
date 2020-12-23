@@ -1414,6 +1414,14 @@ export class PopulatorService {
           largestChartUid,
           getCallbackFunction('charts.uid-increment'),
         );
+
+      for (const plugin of plugins) {
+        for (const chartId of plugin.charts) {
+          connectionService
+            .getRedis()
+            .hset(`charts:${chartId}`, 'pluginId', plugin.id);
+        }
+      }
     }
 
     /**

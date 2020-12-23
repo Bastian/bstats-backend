@@ -15,4 +15,5 @@ export interface Chart {
   title: string;
   isDefault: boolean;
   data: unknown;
+  serviceId: number;
 }

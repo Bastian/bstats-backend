@@ -24,10 +24,10 @@ Key | Description
 Chart Type | Key | Description
 --- | --- | ---
 Linechart | `data:<chartUid>.<line>` | A hash. The field name is the timestamp. Not set data is interpreted as 0.
-SimplePie, AdvancedPie, SimpleMap, AdvancedMap | `data:<chartUid>.<tms2000>` | A sorted set. The score is the amount and the member the slice name. Expires after 61 minutes.
-DrilldownPie "outer data" | `data:<chartUid>.<tms2000>` | A sorted set. The score is the amount and the member the slice name. Expires after 61 minutes.
-DrilldownPie "inner data" | `data:<chartUid>.<tms2000>.>.<upperName>` | A sorted set. The score is the amount and the member the slice name. Expires after 61 minutes.
-Bar Charts | `data:<chartUid>.<tms2000>` | A hash. The field name is in the format `<featureName>:<barIndex>`.
+SimplePie, AdvancedPie, SimpleMap, AdvancedMap | `data:{<pluginId>}.<chartUid>.<tms2000>` | A sorted set. The score is the amount and the member the slice name. Expires after 61 minutes.
+DrilldownPie "outer data" | `data:{<pluginId>}.<chartUid>.<tms2000>` | A sorted set. The score is the amount and the member the slice name. Expires after 61 minutes.
+DrilldownPie "inner data" | `data:{<pluginId>}.<chartUid>.<tms2000>.>.<upperName>` | A sorted set. The score is the amount and the member the slice name. Expires after 61 minutes.
+Bar Charts | `data:{<pluginId>}.<chartUid>.<tms2000>` | A hash. The field name is in the format `<featureName>:<barIndex>`.
 
 ## Structure
 

@@ -6,6 +6,7 @@ import { HistoricLineChartDataService } from './historic-line-chart-data.service
 import { DateUtilService } from './date-util.service';
 import { SingleLineChartData } from './interfaces/data/single-line-chart-data.interface';
 import { ConnectionService } from '../database/connection.service';
+import IORedis from 'ioredis';
 
 @Injectable()
 export class ChartsService {
@@ -31,6 +32,7 @@ export class ChartsService {
       title: redisChart.title,
       isDefault: redisChart.default,
       data: redisChart.data,
+      serviceId: redisChart.serviceId,
     };
   }
 
@@ -45,17 +47,17 @@ export class ChartsService {
     switch (chart.type) {
       case 'simple_pie':
       case 'advanced_pie':
-        return this.redisChartsService.getPieData(id);
+        return this.redisChartsService.getPieData(chart.serviceId, id);
       case 'drilldown_pie':
-        return this.redisChartsService.getDrilldownPieData(id);
+        return this.redisChartsService.getDrilldownPieData(chart.serviceId, id);
       case 'single_linechart':
         return this.findLineChartData(id, '1', maxElements);
       case 'simple_map':
       case 'advanced_map':
-        return this.redisChartsService.getMapData(id);
+        return this.redisChartsService.getMapData(chart.serviceId, id);
       case 'simple_bar':
       case 'advanced_bar':
-        return this.redisChartsService.getBarChartData(id);
+        return this.redisChartsService.getBarChartData(chart.serviceId, id);
     }
 
     return null;
@@ -115,24 +117,6 @@ export class ChartsService {
     return this.findOne(chartId);
   }
 
-  async updatePieData(
-    id: number,
-    tms2000: number,
-    valueName: string,
-    value: number,
-  ) {
-    return this.redisChartsService.updatePieData(id, tms2000, valueName, value);
-  }
-
-  async updateMapData(
-    id: number,
-    tms2000: number,
-    valueName: string,
-    value: number,
-  ) {
-    return this.redisChartsService.updateMapData(id, tms2000, valueName, value);
-  }
-
   async updateLineChartData(
     id: number,
     tms2000: number,
@@ -147,7 +131,55 @@ export class ChartsService {
     );
   }
 
-  async updateDrilldownPieData(
+  getPipelinedChartUpdater(serviceId: number): PipelinedChartUpdater {
+    return new PipelinedChartUpdater(
+      this.redisChartsService,
+      this.connectionService,
+      serviceId,
+    );
+  }
+}
+
+/**
+ * Redis has a feature called "pipeline" which can significantly increase performance.
+ *
+ * This class allows you to easily update data by adding it to the pipeline and then execute the
+ * action by calling PipelinedChartUpdater#exec().
+ */
+export class PipelinedChartUpdater {
+  private readonly pipeline: IORedis.Pipeline;
+
+  constructor(
+    private redisChartsService: RedisChartsService,
+    private connectionService: ConnectionService,
+    private serviceId: number,
+  ) {
+    this.pipeline = connectionService.getRedis().pipeline();
+  }
+
+  updatePieData(id: number, tms2000: number, valueName: string, value: number) {
+    this.redisChartsService.updatePieData(
+      this.serviceId,
+      id,
+      tms2000,
+      valueName,
+      value,
+      this.pipeline,
+    );
+  }
+
+  updateMapData(id: number, tms2000: number, valueName: string, value: number) {
+    this.redisChartsService.updateMapData(
+      this.serviceId,
+      id,
+      tms2000,
+      valueName,
+      value,
+      this.pipeline,
+    );
+  }
+
+  updateDrilldownPieData(
     id: number,
     tms2000: number,
     valueName: string,
@@ -155,19 +187,34 @@ export class ChartsService {
       [key: string]: number;
     },
   ) {
-    return this.redisChartsService.updateDrilldownPieData(
+    this.redisChartsService.updateDrilldownPieData(
+      this.serviceId,
       id,
       tms2000,
       valueName,
       values,
+      this.pipeline,
     );
   }
 
-  async updateBarChartData(
+  updateBarChartData(
     id: number,
     tms2000: number,
     values: { category: string; barValues: number[] }[],
   ) {
-    return this.redisChartsService.updateBarChartData(id, tms2000, values);
+    this.redisChartsService.updateBarChartData(
+      this.serviceId,
+      id,
+      tms2000,
+      values,
+      this.pipeline,
+    );
+  }
+
+  /**
+   * Executes the pipeline. Must not be called more than once.
+   */
+  async exec() {
+    await this.pipeline.exec();
   }
 }

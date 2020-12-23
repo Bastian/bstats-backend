@@ -5,4 +5,5 @@ export interface RedisChart {
   title: string;
   default: boolean;
   data: unknown;
+  serviceId: number;
 }

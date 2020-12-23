@@ -161,33 +161,41 @@ export class DataSubmissionService {
         }
         return serviceWithData;
       })
-      .flatMap(({ service, data }) =>
-        data.customCharts.map((customChartData) => ({
-          service,
-          customChartData,
-        })),
-      )
-      // Update data of all charts
-      .map(async ({ service, customChartData }) => {
-        const chart = await this.chartsService.findByServiceIdAndCustomId(
+      .map(async ({ service, data }) => {
+        const pipelineChartUpdater = this.chartsService.getPipelinedChartUpdater(
           service.id,
-          customChartData.chartId,
         );
-        if (chart === null) {
-          return;
-        }
 
-        if (
-          chart.isDefault &&
-          customChartData.requestRandom !== requestRandom
-        ) {
-          // The service is trying to trick us and sent a default chart as a custom chart
-          return;
-        }
+        const promises = data.customCharts.map(async (customChartData) => {
+          const chart = await this.chartsService.findByServiceIdAndCustomId(
+            service.id,
+            customChartData.chartId,
+          );
+          if (chart === null) {
+            return;
+          }
 
-        await this.chartDataProcessorService
-          .findChartDataProcessor(chart)
-          ?.processData(chart, customChartData, tms2000, geo);
+          if (
+            chart.isDefault &&
+            customChartData.requestRandom !== requestRandom
+          ) {
+            // The service is trying to trick us and sent a default chart as a custom chart
+            return;
+          }
+
+          await this.chartDataProcessorService
+            .findChartDataProcessor(chart)
+            ?.processData(
+              chart,
+              customChartData,
+              tms2000,
+              geo,
+              pipelineChartUpdater,
+            );
+        });
+
+        await Promise.all(promises);
+        await pipelineChartUpdater.exec();
       });
 
     await Promise.all(promises);

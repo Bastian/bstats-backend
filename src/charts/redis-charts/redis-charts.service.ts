@@ -9,6 +9,7 @@ import { SimpleMapChartData } from '../interfaces/data/simple-map-chart-data.int
 import { SingleLineChartData } from '../interfaces/data/single-line-chart-data.interface';
 import { DrilldownPieChartData } from '../interfaces/data/drilldown-pie-chart-data.interface';
 import { BarChartData } from '../interfaces/data/bar-chart-data.interface';
+import IORedis from 'ioredis';
 
 @Injectable()
 export class RedisChartsService {
@@ -18,7 +19,15 @@ export class RedisChartsService {
   ) {}
 
   async findChartById(id: number): Promise<RedisChart | null> {
-    const fields = ['id', 'type', 'position', 'title', 'default', 'data'];
+    const fields = [
+      'id',
+      'type',
+      'position',
+      'title',
+      'default',
+      'data',
+      'pluginId',
+    ];
     const response = await this.connectionService
       .getRedis()
       .hmget(`charts:${id}`, fields);
@@ -31,6 +40,7 @@ export class RedisChartsService {
     assertIsDefined(response[2]);
     assertIsDefined(response[3]);
     assertIsDefined(response[5]);
+    assertIsDefined(response[6]);
 
     return {
       idCustom: response[0],
@@ -39,6 +49,7 @@ export class RedisChartsService {
       title: response[3],
       default: response[4] !== null,
       data: JSON.parse(response[5]),
+      serviceId: parseInt(response[6]),
     };
   }
 
@@ -57,27 +68,28 @@ export class RedisChartsService {
     return parseInt(chartId);
   }
 
-  async updatePieData(
+  updatePieData(
+    serviceId: number,
     id: number,
     tms2000: number,
     valueName: string,
     value: number,
+    pipeline: IORedis.Pipeline,
   ) {
-    await this.connectionService
-      .getRedis()
-      .zincrby(`data:${id}.${tms2000}`, value, valueName);
-    await this.connectionService
-      .getRedis()
-      .expire(`data:${id}.${tms2000}`, 60 * 61);
+    const key = `data:{${serviceId}}.${id}.${tms2000}`;
+    pipeline.zincrby(key, value, valueName);
+    pipeline.expire(key, 60 * 61);
   }
 
   async getPieData(
+    serviceId: number,
     id: number,
     tms2000: number = this.dateUtilService.dateToTms2000(new Date()) - 1,
   ): Promise<(SimplePieChartData & AdvancedPieChartData) | null> {
+    const key = `data:{${serviceId}}.${id}.${tms2000}`;
     const response = await this.connectionService
       .getRedis()
-      .zrange(`data:${id}.${tms2000}`, 0, -1, 'WITHSCORES');
+      .zrange(key, 0, -1, 'WITHSCORES');
 
     if (response === null) {
       return null;
@@ -93,23 +105,27 @@ export class RedisChartsService {
     return data;
   }
 
-  async updateMapData(
+  updateMapData(
+    serviceId: number,
     id: number,
     tms2000: number,
     valueName: string,
     value: number,
+    pipeline: IORedis.Pipeline,
   ) {
     // The charts are saved the same way
-    await this.updatePieData(id, tms2000, valueName, value);
+    this.updatePieData(serviceId, id, tms2000, valueName, value, pipeline);
   }
 
   async getMapData(
+    serviceId: number,
     id: number,
     tms2000: number = this.dateUtilService.dateToTms2000(new Date()) - 1,
   ): Promise<SimpleMapChartData | null> {
+    const key = `data:{${serviceId}}.${id}.${tms2000}`;
     const response = await this.connectionService
       .getRedis()
-      .zrange(`data:${id}.${tms2000}`, 0, -1, 'WITHSCORES');
+      .zrange(key, 0, -1, 'WITHSCORES');
 
     if (response === null) {
       return null;
@@ -220,43 +236,36 @@ export class RedisChartsService {
     );
   }
 
-  async updateDrilldownPieData(
+  updateDrilldownPieData(
+    serviceId: number,
     id: number,
     tms2000: number,
     valueName: string,
     values: {
       [key: string]: number;
     },
+    pipeline: IORedis.Pipeline,
   ) {
     let totalValue = 0;
     for (const valueKey of Object.keys(values)) {
       totalValue += values[valueKey];
-      await this.connectionService
-        .getRedis()
-        .zincrby(
-          `data:${id}.${tms2000}.${valueName}`,
-          values[valueKey],
-          valueKey,
-        );
-      await this.connectionService
-        .getRedis()
-        .expire(`data:${id}.${tms2000}.${valueName}`, 60 * 61);
+      const key = `data:{${serviceId}}.${id}.${tms2000}.${valueName}`;
+      pipeline.zincrby(key, values[valueKey], valueKey);
+      pipeline.expire(key, 60 * 61);
     }
-    await this.connectionService
-      .getRedis()
-      .zincrby(`data:${id}.${tms2000}`, totalValue, valueName);
-    await this.connectionService
-      .getRedis()
-      .expire(`data:${id}.${tms2000}`, 60 * 61);
+    const key = `data:{${serviceId}}.${id}.${tms2000}`;
+    pipeline.zincrby(key, totalValue, valueName);
+    pipeline.expire(key, 60 * 61);
   }
 
   async getDrilldownPieData(
+    serviceId: number,
     id: number,
     tms2000: number = this.dateUtilService.dateToTms2000(new Date()) - 1,
   ): Promise<DrilldownPieChartData | null> {
     const response = await this.connectionService
       .getRedis()
-      .zrange(`data:${id}.${tms2000}`, 0, -1, 'WITHSCORES');
+      .zrange(`data:{${serviceId}}.${id}.${tms2000}`, 0, -1, 'WITHSCORES');
 
     if (response === null) {
       return null;
@@ -277,7 +286,12 @@ export class RedisChartsService {
 
       const drilldownResponse = await this.connectionService
         .getRedis()
-        .zrange(`data:${id}.${tms2000}.${response[i]}`, 0, -1, 'WITHSCORES');
+        .zrange(
+          `data:{${serviceId}}.${id}.${tms2000}.${response[i]}`,
+          0,
+          -1,
+          'WITHSCORES',
+        );
 
       // We have to convert the data first, e.g.:
       // ["Windows 10","4","Windows 7","3"] -> {"name": "Windows", "id": "Windows", "data":[["Windows 10", 4], ["Windows 7", 3]]}
@@ -299,14 +313,15 @@ export class RedisChartsService {
     return data;
   }
 
-  async updateBarChartData(
+  updateBarChartData(
+    serviceId: number,
     id: number,
     tms2000: number,
     values: { category: string; barValues: number[] }[],
+    pipeline: IORedis.Pipeline,
   ) {
-    const key = `data:${id}.${tms2000}`;
+    const key = `data:{${serviceId}}.${id}.${tms2000}`;
 
-    const pipeline = this.connectionService.getRedis().pipeline();
     values
       .flatMap(({ category, barValues }) =>
         barValues.map<[string, number, number]>((barValue, barIndex) => [
@@ -319,14 +334,14 @@ export class RedisChartsService {
         pipeline.hincrby(key, `${category}:${barIndex}`, barValue),
       );
     pipeline.expire(key, 60 * 61);
-    await pipeline.exec();
   }
 
   async getBarChartData(
+    serviceId: number,
     id: number,
     tms2000: number = this.dateUtilService.dateToTms2000(new Date()) - 1,
   ): Promise<BarChartData | null> {
-    const key = `data:${id}.${tms2000}`;
+    const key = `data:{${serviceId}}.${id}.${tms2000}`;
 
     const response = await this.connectionService.getRedis().hgetall(key);
 
