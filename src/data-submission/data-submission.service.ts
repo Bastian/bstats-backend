@@ -104,6 +104,7 @@ export class DataSubmissionService {
 
     const service = await this.servicesService.findOne(
       submitDataDto.service.id,
+      true,
     );
     assertIsDefinedOrThrowNotFound(service);
 
@@ -133,11 +134,11 @@ export class DataSubmissionService {
 
     const promises = submitDataDto.service.customCharts.map(
       async (customChartData) => {
-        const chart = await this.chartsService.findByServiceIdAndCustomId(
-          service.id,
-          customChartData.chartId,
+        const chart = service?.charts?.find(
+          (c) => c.idCustom == customChartData.chartId,
         );
-        if (chart === null) {
+
+        if (chart == null) {
           return;
         }
 
