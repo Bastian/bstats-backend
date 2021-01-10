@@ -1,16 +1,11 @@
-import { Body, Controller, Ip, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { SubmitDataDto } from './dto/submit-data.dto';
 import { DataSubmissionService } from './data-submission.service';
 import { IpAddress } from '../ip-address.decorator';
 
-@Controller('submitData')
+@Controller('data')
 export class DataSubmissionController {
   constructor(private dataSubmissionService: DataSubmissionService) {}
-
-  @Post()
-  async submitDataOld(@Body() submitDataDto: SubmitDataDto, @Ip() ip: string) {
-    return this.dataSubmissionService.submitData('bukkit', submitDataDto, ip);
-  }
 
   @Post(':softwareUrl')
   async submitData(
@@ -18,10 +13,11 @@ export class DataSubmissionController {
     @Body() submitDataDto: SubmitDataDto,
     @IpAddress() ip: string,
   ) {
-    return this.dataSubmissionService.submitData(
+    return this.dataSubmissionService.submitServiceData(
       softwareUrl,
       submitDataDto,
       ip,
+      false,
     );
   }
 }

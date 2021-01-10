@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { LegacyController } from './legacy.controller';
 import { ServicesModule } from '../services/services.module';
 import { ChartsModule } from '../charts/charts.module';
+import { DataSubmissionModule } from '../data-submission/data-submission.module';
 
 // This module contains legacy endpoints that should no longer be used but exist to
 // maintain backwards-compatibility with users that rely on the old public api.
@@ -11,8 +12,10 @@ import { ChartsModule } from '../charts/charts.module';
 // - /api/v1/plugins/:id/charts -> /legacy/service/:id/charts
 // - /api/v1/plugins/:id/charts/:idCustom -> /legacy/service/:id/charts/:idCustom
 // - /api/v1/plugins/:id/charts/:idCustom/data -> /legacy/service/:id/charts/:idCustom/data
+// - /submitData -> /legacy/submitData
+// - /submitData/:software -> /legacy/submitData/:software
 @Module({
   controllers: [LegacyController],
-  imports: [ServicesModule, ChartsModule],
+  imports: [ServicesModule, ChartsModule, DataSubmissionModule],
 })
 export class LegacyModule {}

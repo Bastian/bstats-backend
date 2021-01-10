@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import {
   SubmitDataCustomChartDto,
   SubmitDataDto,
-  SubmitDataPluginDto,
 } from '../dto/submit-data.dto';
 import { Parser } from './interfaces/parser.interface';
 import {
@@ -20,7 +19,6 @@ export class NameInRequestParser implements Parser {
   parse(
     chart: DefaultChart,
     submitDataDto: SubmitDataDto,
-    submitDataPluginDto: SubmitDataPluginDto | null,
     requestRandom: number,
   ): SubmitDataCustomChartDto[] | null {
     if (!isNameInRequestParser(chart.requestParser)) {
@@ -28,8 +26,8 @@ export class NameInRequestParser implements Parser {
     }
     const { nameInRequest, position } = chart.requestParser;
     let value: any = null;
-    if (position === 'plugin' && submitDataPluginDto !== null) {
-      value = submitDataPluginDto[nameInRequest];
+    if (position === 'plugin') {
+      value = submitDataDto.service[nameInRequest];
     }
     if (position === 'global') {
       value = submitDataDto[nameInRequest];

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import {
   SubmitDataCustomChartDto,
   SubmitDataDto,
-  SubmitDataPluginDto,
 } from '../dto/submit-data.dto';
 import { Parser } from './interfaces/parser.interface';
 import { DefaultChart } from '../../charts/interfaces/charts/default-chart.interface';
@@ -21,7 +20,6 @@ export class JavaVersionParser implements Parser {
   parse(
     chart: DefaultChart,
     submitDataDto: SubmitDataDto,
-    submitDataPluginDto: SubmitDataPluginDto | null,
     requestRandom: number,
   ): SubmitDataCustomChartDto[] | null {
     const { javaVersion } = submitDataDto;

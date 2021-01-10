@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConnectionService } from '../database/connection.service';
-import { SubmitDataDto } from './dto/submit-data.dto';
 import { Software } from '../software/interfaces/software.interface';
 import { TooManyRequestsException } from '../exceptions/TooManyRequestsException';
+import { SubmitDataDto } from './dto/submit-data.dto';
 
 @Injectable()
 export class RatelimitService {
@@ -16,7 +16,7 @@ export class RatelimitService {
   ) {
     if (
       await this.isRatelimited(
-        submitDataDto.serverUUID,
+        `${submitDataDto.service.id}#${submitDataDto.serverUUID}`,
         software.url,
         1,
         tms2000,
@@ -26,7 +26,7 @@ export class RatelimitService {
     }
     if (
       await this.isRatelimited(
-        ip,
+        `${submitDataDto.service.id}#${ip}`,
         software.url,
         software.maxRequestsPerIp,
         tms2000,

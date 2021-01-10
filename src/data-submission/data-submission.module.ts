@@ -45,5 +45,6 @@ import { BarChartDataProcessor } from './data-processors/bar-chart-data.processo
   ],
   controllers: [DataSubmissionController],
   imports: [SoftwareModule, ServicesModule, ChartsModule],
+  exports: [DataSubmissionService],
 })
 export class DataSubmissionModule {}
