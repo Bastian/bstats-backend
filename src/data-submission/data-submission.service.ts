@@ -6,10 +6,6 @@ import {
 } from './dto/submit-data.dto';
 import { SoftwareService } from '../software/software.service';
 import { DateUtilService } from '../charts/date-util.service';
-import {
-  DefaultChart,
-  isNameInRequestParser,
-} from '../charts/interfaces/charts/default-chart.interface';
 import { ServicesService } from '../services/services.service';
 import { ChartsService } from '../charts/charts.service';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
@@ -84,22 +80,15 @@ export class DataSubmissionService {
 
     const requestRandom = Math.random();
 
-    const defaultGlobalCharts: SubmitDataCustomChartDto[] = [];
-    const defaultPluginCharts: DefaultChart[] = [];
+    const defaultCharts: SubmitDataCustomChartDto[] = [];
 
     for (let i = 0; i < software.defaultCharts.length; i++) {
       const chart = software.defaultCharts[i];
 
-      if (!isGlobalService && isNameInRequestParser(chart.requestParser)) {
-        if (chart.requestParser.position === 'plugin') {
-          defaultPluginCharts.push(chart);
-        }
-      }
-
       this.parserService
         .findParser(chart)
         ?.parse(chart, submitDataDto, requestRandom, countryName)
-        ?.forEach((c) => defaultGlobalCharts.push(c));
+        ?.forEach((c) => defaultCharts.push(c));
     }
 
     const service = await this.servicesService.findOne(
@@ -114,19 +103,9 @@ export class DataSubmissionService {
     }
 
     // Add default charts as "fake" custom charts
-    defaultGlobalCharts.forEach((defaultGlobalChart) =>
+    defaultCharts.forEach((defaultGlobalChart) =>
       submitDataDto.service.customCharts.push(defaultGlobalChart),
     );
-
-    // Add default charts as "fake" custom charts
-    for (const defaultPluginChart of defaultPluginCharts) {
-      if (!isNameInRequestParser(defaultPluginChart.requestParser)) {
-        continue;
-      }
-      this.nameInRequestParser
-        .parse(defaultPluginChart, submitDataDto, requestRandom)
-        ?.forEach((c) => submitDataDto.service.customCharts.push(c));
-    }
 
     const pipelineChartUpdater = this.chartsService.getPipelinedChartUpdater(
       service.id,
