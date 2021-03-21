@@ -18,4 +18,11 @@ export class SoftwareController {
     assertIsDefinedOrThrowNotFound(software);
     return software;
   }
+
+  @Get('url/:url')
+  async findOneByUrl(@Param('url') url: string): Promise<Software> {
+    const software = await this.softwareService.findOneByUrl(url);
+    assertIsDefinedOrThrowNotFound(software);
+    return software;
+  }
 }
