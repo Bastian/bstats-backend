@@ -1,4 +1,9 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   SubmitDataCustomChartDto,
   SubmitDataDto,
@@ -15,6 +20,7 @@ import { NameInRequestParser } from './parser/name-in-request.parser';
 import { GeoIpService } from './geo-ip.service';
 import { ChartDataProcessorService } from './chart-data-processor.service';
 import { TooManyRequestsException } from '../exceptions/TooManyRequestsException';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DataSubmissionService {
@@ -30,6 +36,7 @@ export class DataSubmissionService {
     private parserService: ParserService,
     private nameInRequestParser: NameInRequestParser,
     private chartDataProcessorService: ChartDataProcessorService,
+    private configService: ConfigService,
   ) {}
 
   async submitServiceData(
@@ -102,6 +109,15 @@ export class DataSubmissionService {
       throw new UnauthorizedException();
     }
 
+    if (this.hasBlockedWords(submitDataDto)) {
+      this.logger.log(
+        `Blocked incoming request for blocked words from ip ${ip}. Content is "${JSON.stringify(
+          submitDataDto,
+        )}"`,
+      );
+      throw new BadRequestException();
+    }
+
     // Add default charts as "fake" custom charts
     defaultCharts.forEach((defaultGlobalChart) =>
       submitDataDto.service.customCharts.push(defaultGlobalChart),
@@ -143,5 +159,19 @@ export class DataSubmissionService {
 
     await Promise.all(promises);
     await pipelineChartUpdater.exec();
+  }
+
+  hasBlockedWords(submitDataDto: SubmitDataDto) {
+    const blockedWords = JSON.parse(
+      this.configService.get<string>('WORD_BLOCKLIST', '[]'),
+    );
+    if (blockedWords.length < 0) {
+      return;
+    }
+
+    const stringified = JSON.stringify(submitDataDto);
+    return (
+      blockedWords.find((word) => stringified.includes(word)) !== undefined
+    );
   }
 }

@@ -37,7 +37,6 @@ following environment variables:
 | REDIS_HOST        | 127.0.0.1     | The Redis host or the host of a cluster node |
 | REDIS_PORT        | 6379          | The port of the Redis instance of the cluster node |
 
-
 ## Firebase
 
 bStats uses Firebase Auth for authentication and Firestore to store historic line chart data.
@@ -60,6 +59,15 @@ If multiple instance of the bStats backend are running as a cluster, you must co
 These sharding information is used to divide the load of periodically moving line chart data from Redis into Firestore.
 If you do not set the variables, the application will still work properly but have a bottleneck that prevents it from
 properly scaling horizontally.
+
+## Global Filter
+
+Sometimes, people try to send fake data to mess up with the displayed data.
+While not being perfect, these kind of requests can usually be blocked and logged with a simple word filter.
+
+| Variable       | Default Value           | Description |
+| ---------------| ----------------------- | ----------- |
+| WORD_BLOCKLIST | ["I do not like pizza"] | A list of words that should be blocked, formatted as a JSON array |
 
 ## Docker Compose
 

@@ -21,6 +21,7 @@ import { SingleLineChartDataProcessor } from './data-processors/single-line-char
 import { SimpleMapChartDataProcessor } from './data-processors/simple-map-chart-data.processor';
 import { ChartDataProcessorService } from './chart-data-processor.service';
 import { BarChartDataProcessor } from './data-processors/bar-chart-data.processor';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   providers: [
@@ -44,7 +45,7 @@ import { BarChartDataProcessor } from './data-processors/bar-chart-data.processo
     BarChartDataProcessor,
   ],
   controllers: [DataSubmissionController],
-  imports: [SoftwareModule, ServicesModule, ChartsModule],
+  imports: [ConfigModule, SoftwareModule, ServicesModule, ChartsModule],
   exports: [DataSubmissionService],
 })
 export class DataSubmissionModule {}
