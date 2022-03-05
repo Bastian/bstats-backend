@@ -36,6 +36,17 @@ export class ServicesController {
     return service;
   }
 
+  @Get('users/:username')
+  async findUserServiceIds(
+    @Param('username') username: string,
+    @Query('includeCharts', new DefaultValuePipe(false), ParseBoolPipe)
+    includeCharts: boolean,
+  ): Promise<Service[]> {
+    const services = await this.servicesService.findUserServiceIds(username,includeCharts);
+    assertIsDefinedOrThrowNotFound(services);
+    return services;
+  }
+
   @Get(':id')
   async findOne(
     @Param('id', ParseIntPipe) id: number,
