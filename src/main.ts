@@ -8,7 +8,7 @@ import * as admin from 'firebase-admin';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-function swagger(app){
+function swagger(app) {
   const options = new DocumentBuilder()
     .setTitle('API List')
     .setDescription('bstats-backend API list')
