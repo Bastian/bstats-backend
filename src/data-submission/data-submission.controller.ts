@@ -2,8 +2,10 @@ import { Body, Controller, Param, Post } from '@nestjs/common';
 import { SubmitDataDto } from './dto/submit-data.dto';
 import { DataSubmissionService } from './data-submission.service';
 import { IpAddress } from '../ip-address.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('data')
+@ApiTags('data')
 export class DataSubmissionController {
   constructor(private dataSubmissionService: DataSubmissionService) {}
 

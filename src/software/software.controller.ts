@@ -2,8 +2,10 @@ import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { SoftwareService } from './software.service';
 import { Software } from './interfaces/software.interface';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('software')
+@ApiTags('software')
 export class SoftwareController {
   constructor(private softwareService: SoftwareService) {}
 

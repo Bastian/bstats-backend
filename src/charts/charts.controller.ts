@@ -10,8 +10,10 @@ import { Chart } from './interfaces/charts/chart.interface';
 import { ChartsService } from './charts.service';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
 import { ChartData } from './interfaces/data/chart-data.interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('charts')
+@ApiTags('charts')
 export class ChartsController {
   constructor(private chartsService: ChartsService) {}
 
