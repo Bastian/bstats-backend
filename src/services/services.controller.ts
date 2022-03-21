@@ -13,8 +13,10 @@ import { Service } from './interfaces/service.interface';
 import { ServicesService } from './services.service';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
 import { AuthenticatedUser } from '../auth/authenticated-user.interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('services')
+@ApiTags('services')
 export class ServicesController {
   constructor(private servicesService: ServicesService) {}
 

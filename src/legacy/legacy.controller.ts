@@ -17,8 +17,10 @@ import { ChartsService } from '../charts/charts.service';
 import { DeprecatedSubmitDataDto } from '../data-submission/dto/submit-data.dto';
 import { IpAddress } from '../ip-address.decorator';
 import { DataSubmissionService } from '../data-submission/data-submission.service';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('legacy')
+@ApiTags('legacy')
 export class LegacyController {
   constructor(
     private servicesService: ServicesService,

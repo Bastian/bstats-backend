@@ -2,8 +2,10 @@ import { Controller, Get, Param, Res } from '@nestjs/common';
 import { SignaturesService } from './signatures.service';
 import { assertIsDefinedOrThrowNotFound } from '../../assertions';
 import { Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('signatures')
+@ApiTags('signatures')
 export class SignaturesController {
   constructor(private signaturesService: SignaturesService) {}
 
