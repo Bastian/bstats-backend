@@ -46,5 +46,8 @@ Key | Description
 `charts.index.uid.pluginId+chartId:<pluginId>.<chartId>` | A string which stores the chart uid. Used to get the uid of a chart by plugin id and chart id.
 `charts.uid-increment` | A string (in form of an integer). Increments every time a new chart is added.
 
+## Cache
 
-
+Key | Description
+--- | ---
+`history-data:<id>:<line>:<tms2000Div1000>` | A cache with the historic line data. Expires after 1 week.

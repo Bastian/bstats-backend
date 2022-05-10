@@ -86,6 +86,10 @@ export class HistoricLineChartDataService {
           merge: true,
         },
       );
+      // Clear the cache (if it exists)
+      await this.connectionService
+        .getRedis()
+        .del(`history-data:${id}:${line}:${tms2000Div1000}`);
     }
   }
 
@@ -126,14 +130,46 @@ export class HistoricLineChartDataService {
     const data: SingleLineChartData = [];
 
     for (const tms2000Div1000 of tms2000Div1000sToFetch) {
-      await this.firestoreRatelimiterService.checkRatelimitAndIncr('read');
-      const document = await this.getFirestoreDocument(
-        id,
-        tms2000Div1000,
-        line,
-      ).get();
+      // To decrease the number for Firestore reads, we cache historic line
+      // chart data in Redis for 1 week when it is requested. So before
+      // we read, we first check if the data is in Redis.
+      const redisLineData = await this.connectionService
+        .getRedis()
+        .get(`history-data:${id}:${line}:${tms2000Div1000}`);
 
-      const lineData = document.data()?.data;
+      let lineData:
+        | {
+            [timestamp: number]: number | undefined;
+          }
+        | undefined;
+
+      if (redisLineData) {
+        lineData = JSON.parse(redisLineData);
+      } else {
+        await this.firestoreRatelimiterService.checkRatelimitAndIncr('read');
+        const document = await this.getFirestoreDocument(
+          id,
+          tms2000Div1000,
+          line,
+        ).get();
+
+        lineData = document.data()?.data;
+
+        // Cache the historic data in Redis
+        await this.connectionService
+          .getRedis()
+          .set(
+            `history-data:${id}:${line}:${tms2000Div1000}`,
+            JSON.stringify(lineData ?? {}),
+          );
+        // for 1 week
+        await this.connectionService
+          .getRedis()
+          .expire(
+            `history-data:${id}:${line}:${tms2000Div1000}`,
+            60 * 60 * 24 * 7,
+          );
+      }
 
       for (let i = 0; i < 1000; i++) {
         const tms2000 = (tms2000Div1000 + 1) * 1000 - (i + 1);
