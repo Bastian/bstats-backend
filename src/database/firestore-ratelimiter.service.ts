@@ -36,6 +36,7 @@ export class FirestoreRatelimiterService {
       .expire(key, 60 * 31)
       .exec();
 
-    return response[0][1] > this.maxReadsPer30Min;
+    const result = response?.[0]?.[1] as number;
+    return result > this.maxReadsPer30Min;
   }
 }

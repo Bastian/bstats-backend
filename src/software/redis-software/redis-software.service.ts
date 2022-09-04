@@ -20,7 +20,7 @@ export class RedisSoftwareService {
     ];
     const response = await this.connectionService
       .getRedis()
-      .hmget(`software:${id}`, fields);
+      .hmget(`software:${id}`, ...fields);
 
     if (response == null || response[0] == null) {
       return null;

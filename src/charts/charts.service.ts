@@ -6,7 +6,7 @@ import { HistoricLineChartDataService } from './historic-line-chart-data.service
 import { DateUtilService } from './date-util.service';
 import { SingleLineChartData } from './interfaces/data/single-line-chart-data.interface';
 import { ConnectionService } from '../database/connection.service';
-import IORedis from 'ioredis';
+import { Pipeline } from 'ioredis';
 
 @Injectable()
 export class ChartsService {
@@ -147,14 +147,14 @@ export class ChartsService {
  * action by calling PipelinedChartUpdater#exec().
  */
 export class PipelinedChartUpdater {
-  private readonly pipeline: IORedis.Pipeline;
+  private readonly pipeline: Pipeline;
 
   constructor(
     private redisChartsService: RedisChartsService,
     private connectionService: ConnectionService,
     private serviceId: number,
   ) {
-    this.pipeline = connectionService.getRedis().pipeline();
+    this.pipeline = connectionService.getRedis().pipeline() as Pipeline;
   }
 
   updatePieData(id: number, tms2000: number, valueName: string, value: number) {

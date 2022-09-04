@@ -50,6 +50,7 @@ export class RatelimitService {
       .expire(key, 60 * 31)
       .exec();
 
-    return response[0][1] > maxRequests;
+    const result = response?.[0]?.[1] as number;
+    return result > maxRequests;
   }
 }
