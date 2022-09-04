@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CanvasRenderService } from 'chartjs-node-canvas';
+import { ChartConfiguration } from 'chart.js';
+import 'chartjs-adapter-moment';
+import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
 import { SingleLineChartData } from '../interfaces/data/single-line-chart-data.interface';
 
 @Injectable()
@@ -25,14 +27,16 @@ export class ChartRendererService {
       height,
     );
 
-    const configuration = {
+    const configuration: ChartConfiguration = {
       type: 'line',
-      backgroundColor: '#F5DEB3',
       data: {
         datasets: [
           {
-            data: mapLineChartData(servers),
-            label: servers[0][1].toLocaleString('en-US') + ' Servers',
+            data: mapLineChartData(servers) as unknown as {
+              x: number;
+              y: number;
+            }[],
+            label: ' ' + servers[0][1].toLocaleString('en-US') + ' Servers',
             borderColor: 'rgb(23, 150, 243)',
             backgroundColor: 'rgba(23, 150, 243, 0.6)',
             borderWidth: 2,
@@ -41,8 +45,11 @@ export class ChartRendererService {
             order: 0,
           },
           {
-            data: mapLineChartData(players),
-            label: players[0][1].toLocaleString('en-US') + ' Players',
+            data: mapLineChartData(players) as unknown as {
+              x: number;
+              y: number;
+            }[],
+            label: ' ' + players[0][1].toLocaleString('en-US') + ' Players',
             borderColor: 'rgba(255,12,0,0.25)',
             backgroundColor: 'rgba(247, 114, 104, 1)',
             borderWidth: 2,
@@ -53,51 +60,54 @@ export class ChartRendererService {
         ],
       },
       options: {
-        title: {
-          display: true,
-          text: title,
-          fontSize: 18,
-          fontStyle: 'none',
-          fontColor: '#444',
-        },
-        legend: {
-          position: 'bottom',
-          labels: {
-            usePointStyle: true,
-            boxWidth: 8,
-            fontSize: 12,
-            fontColor: '#000',
-            padding: 15,
+        scales: {
+          x: {
+            type: 'timeseries',
+            time: {
+              unit: 'day',
+            },
+            grid: {
+              display: false,
+            },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              autoSkip: true,
+              maxTicksLimit: 6,
+              callback: function (label: number) {
+                if (maxValue > 5000) {
+                  return label / 1000 + 'k';
+                } else {
+                  return label;
+                }
+              },
+            },
           },
         },
-        scales: {
-          xAxes: [
-            {
-              type: 'time',
-              time: {
-                unit: 'day',
-              },
-              gridLines: {
-                display: false,
-              },
+        plugins: {
+          title: {
+            display: true,
+            text: title,
+            font: {
+              size: 20,
+              style: 'normal',
             },
-          ],
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-                autoSkip: true,
-                maxTicksLimit: 6,
-                callback: function (label) {
-                  if (maxValue > 5000) {
-                    return label / 1000 + 'k';
-                  } else {
-                    return label;
-                  }
-                },
+            color: '#444',
+          },
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              pointStyle: '',
+              boxWidth: 8,
+              font: {
+                size: 12,
               },
+              color: '#000',
+              padding: 15,
             },
-          ],
+          },
         },
       },
     };
@@ -110,44 +120,26 @@ export class ChartRendererService {
   }
 
   private static canvasRenderServices: {
-    [resolution: string]: CanvasRenderService;
+    [resolution: string]: ChartJSNodeCanvas;
   } = {};
 
   private static getCanvasRenderService(
     width: number,
     height: number,
-  ): CanvasRenderService {
+  ): ChartJSNodeCanvas {
     if (ChartRendererService.canvasRenderServices[`${width}x${height}`]) {
       return ChartRendererService.canvasRenderServices[`${width}x${height}`];
     }
 
-    const chartCallback = (ChartJS) => {
-      ChartJS.defaults.global.elements.rectangle.borderWidth = 2;
-      ChartJS.plugins.register({
-        // Max background white
-        beforeDraw: function (chartInstance) {
-          const ctx = chartInstance.chart.ctx;
-          ctx.fillStyle = 'white';
-          ctx.fillRect(
-            0,
-            0,
-            chartInstance.chart.width,
-            chartInstance.chart.height,
-          );
-        },
-      });
-    };
-
-    const canvasRenderService = new CanvasRenderService(
+    const canvasRenderService = new ChartJSNodeCanvas({
       width,
       height,
-      chartCallback,
-      'svg',
-    );
+      backgroundColour: '#FFFFFF',
+      type: 'svg',
+    });
 
-    ChartRendererService.canvasRenderServices[
-      `${width}x${height}`
-    ] = canvasRenderService;
+    ChartRendererService.canvasRenderServices[`${width}x${height}`] =
+      canvasRenderService;
 
     return canvasRenderService;
   }

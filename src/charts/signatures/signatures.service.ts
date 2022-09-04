@@ -38,10 +38,10 @@ export class SignaturesService {
       if (chart.type !== 'single_linechart') {
         return null;
       }
-      return ((await this.chartsService.findData(
+      return (await this.chartsService.findData(
         chart.id,
         2 * 24 * 7,
-      )) as unknown) as Promise<SingleLineChartData | null>;
+      )) as unknown as Promise<SingleLineChartData | null>;
     };
 
     const playersData = await getChartData('players');

@@ -58,10 +58,11 @@ export class ServicesService {
     name: string,
     includeCharts = false,
   ): Promise<Service | null> {
-    const serviceId = await this.redisServicesService.findServiceIdBySoftwareUrlAndName(
-      softwareUrl,
-      name,
-    );
+    const serviceId =
+      await this.redisServicesService.findServiceIdBySoftwareUrlAndName(
+        softwareUrl,
+        name,
+      );
     if (serviceId === null) {
       return null;
     }

@@ -93,12 +93,13 @@ export class ChartsService {
     );
 
     // And the historic data from firestore
-    const dataFromFirestore = await this.historicLineChartDataService.getLineChartData(
-      id,
-      line,
-      maxElements - (startTms2000 - parseInt(lastSyncTms2000)),
-      parseInt(lastSyncTms2000),
-    );
+    const dataFromFirestore =
+      await this.historicLineChartDataService.getLineChartData(
+        id,
+        line,
+        maxElements - (startTms2000 - parseInt(lastSyncTms2000)),
+        parseInt(lastSyncTms2000),
+      );
 
     return [...(dataFromRedis ?? []), ...dataFromFirestore];
   }
@@ -107,10 +108,11 @@ export class ChartsService {
     serviceId: number,
     customId: string,
   ): Promise<Chart | null> {
-    const chartId = await this.redisChartsService.findChartIdByServiceIdAndCustomId(
-      serviceId,
-      customId,
-    );
+    const chartId =
+      await this.redisChartsService.findChartIdByServiceIdAndCustomId(
+        serviceId,
+        customId,
+      );
     if (chartId == null) {
       return null;
     }
