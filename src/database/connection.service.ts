@@ -16,11 +16,7 @@ export class ConnectionService {
     };
 
     if (useCluster) {
-      this.redis = new Redis.Cluster([node], {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        enableAutoPipelining: true,
-      });
+      this.redis = new Redis.Cluster([node], { enableAutoPipelining: true });
     } else {
       this.redis = new Redis({ ...node, enableAutoPipelining: true });
     }
