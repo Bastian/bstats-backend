@@ -52,7 +52,7 @@ export class BukkitServerSoftwareParser implements Parser {
       softwareName = 'Yatopia';
     } else if (lowercaseBukkitVersion.indexOf('magma') !== -1) {
       softwareName = 'Magma';
-    } else if (lowercaseBukkitVersion.indexOf('titanium') != -1) {
+    } else if (lowercaseBukkitVersion.indexOf('titanium') !== -1) {
       softwareName = "Titanium";
     }
 
