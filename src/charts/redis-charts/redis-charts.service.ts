@@ -9,7 +9,7 @@ import { SimpleMapChartData } from '../interfaces/data/simple-map-chart-data.int
 import { SingleLineChartData } from '../interfaces/data/single-line-chart-data.interface';
 import { DrilldownPieChartData } from '../interfaces/data/drilldown-pie-chart-data.interface';
 import { BarChartData } from '../interfaces/data/bar-chart-data.interface';
-import IORedis from 'ioredis';
+import { Pipeline } from 'ioredis';
 
 @Injectable()
 export class RedisChartsService {
@@ -30,7 +30,7 @@ export class RedisChartsService {
     ];
     const response = await this.connectionService
       .getRedis()
-      .hmget(`charts:${id}`, fields);
+      .hmget(`charts:${id}`, ...fields);
 
     if (response == null || response[0] == null) {
       return null;
@@ -74,7 +74,7 @@ export class RedisChartsService {
     tms2000: number,
     valueName: string,
     value: number,
-    pipeline: IORedis.Pipeline,
+    pipeline: Pipeline,
   ) {
     const key = `data:{${serviceId}}.${id}.${tms2000}`;
     pipeline.zincrby(key, value, valueName);
@@ -111,7 +111,7 @@ export class RedisChartsService {
     tms2000: number,
     valueName: string,
     value: number,
-    pipeline: IORedis.Pipeline,
+    pipeline: Pipeline,
   ) {
     // The charts are saved the same way
     this.updatePieData(serviceId, id, tms2000, valueName, value, pipeline);
@@ -176,7 +176,7 @@ export class RedisChartsService {
 
     const response = await this.connectionService
       .getRedis()
-      .hmget(`data:${id}.${line}`, datesToFetch);
+      .hmget(`data:${id}.${line}`, ...datesToFetch);
 
     if (response === null) {
       return null;
@@ -230,10 +230,12 @@ export class RedisChartsService {
   }
 
   async deleteLineChartData(id: number, line: string, timestamps: number[]) {
-    await this.connectionService.getRedis().hdel(
-      `data:${id}.${line}`,
-      timestamps.map((timestamp) => timestamp.toString()),
-    );
+    await this.connectionService
+      .getRedis()
+      .hdel(
+        `data:${id}.${line}`,
+        ...timestamps.map((timestamp) => timestamp.toString()),
+      );
   }
 
   updateDrilldownPieData(
@@ -244,7 +246,7 @@ export class RedisChartsService {
     values: {
       [key: string]: number;
     },
-    pipeline: IORedis.Pipeline,
+    pipeline: Pipeline,
   ) {
     let totalValue = 0;
     for (const valueKey of Object.keys(values)) {
@@ -318,7 +320,7 @@ export class RedisChartsService {
     id: number,
     tms2000: number,
     values: { category: string; barValues: number[] }[],
-    pipeline: IORedis.Pipeline,
+    pipeline: Pipeline,
   ) {
     const key = `data:{${serviceId}}.${id}.${tms2000}`;
 

@@ -105,14 +105,12 @@ export class HistoricLineChartDataService {
   ): Promise<SingleLineChartData> {
     const date = this.dateUtilService.tms2000ToDate(tms2000Last);
 
-    const currentTms2000Div1000 = this.dateUtilService.dateToTms2000Div1000(
-      date,
-    );
+    const currentTms2000Div1000 =
+      this.dateUtilService.dateToTms2000Div1000(date);
 
     // The latest document does most likely not contain the full 1000 data points
-    const elementsInFirstDocument = this.dateUtilService.thirtyMinutesSinceLastTms2000Div1000(
-      date,
-    );
+    const elementsInFirstDocument =
+      this.dateUtilService.thirtyMinutesSinceLastTms2000Div1000(date);
 
     // Every document only contains 1000 data points at max
     const tms2000Div1000sToFetch = [currentTms2000Div1000];

@@ -21,7 +21,6 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [ChartsController],
   imports: [
     ConfigModule,
-    DateUtilService,
     ChartRendererModule,
     SignaturesModule,
     forwardRef(() => ServicesModule),

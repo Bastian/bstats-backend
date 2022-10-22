@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
-import IORedis from 'ioredis';
+import Redis, { Cluster } from 'ioredis';
 
 @Injectable()
 export class ConnectionService {
-  private readonly redis: IORedis.Redis | Redis.Cluster;
+  private readonly redis: Redis | Cluster;
 
   constructor(private configService: ConfigService) {
     const useCluster =
@@ -17,17 +16,13 @@ export class ConnectionService {
     };
 
     if (useCluster) {
-      this.redis = new Redis.Cluster([node], {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        enableAutoPipelining: true,
-      });
+      this.redis = new Redis.Cluster([node], { enableAutoPipelining: true });
     } else {
       this.redis = new Redis({ ...node, enableAutoPipelining: true });
     }
   }
 
-  getRedis(): IORedis.Redis | Redis.Cluster {
+  getRedis(): Redis | Cluster {
     return this.redis;
   }
 }

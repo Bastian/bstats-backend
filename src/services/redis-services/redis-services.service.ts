@@ -11,7 +11,7 @@ export class RedisServicesService {
     const fields = ['name', 'owner', 'software', 'global', 'charts'];
     const response = await this.connectionService
       .getRedis()
-      .hmget(`plugins:${id}`, fields);
+      .hmget(`plugins:${id}`, ...fields);
 
     if (response == null || response[0] == null) {
       return null;
