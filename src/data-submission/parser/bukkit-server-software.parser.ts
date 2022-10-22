@@ -50,6 +50,8 @@ export class BukkitServerSoftwareParser implements Parser {
       softwareName = 'Airplane';
     } else if (lowercaseBukkitVersion.indexOf('yatopia') !== -1) {
       softwareName = 'Yatopia';
+    } else if (lowercaseBukkitVersion.indexOf('arclight') !== -1) {
+      softwareName = 'Arclight';
     } else if (lowercaseBukkitVersion.indexOf('magma') !== -1) {
       softwareName = 'Magma';
     } else if (lowercaseBukkitVersion.indexOf('titanium') !== -1) {
