@@ -21,7 +21,7 @@ export class DataArchiverService {
   ) {}
 
   /*
-   * To have a more even load on the server, we use the following strategy to move historic data to the Firestore:
+   * To have a more even load on the server, we use the following strategy to move historic data to the postgres database:
    * 1. Every shard (= a running instance of the application) is only responsible for a subset of all applications
    * 2. This subset is processed in batches.
    */
@@ -73,7 +73,7 @@ export class DataArchiverService {
           this.logger.debug(
             `Moving historic line chart data for chart with id ${chart.id} and line '1'`,
           );
-          await this.historicLineChartDataService.moveHistoricRedisDataToFirebase(
+          await this.historicLineChartDataService.moveHistoricRedisDataToPostgres(
             chart.id,
             '1',
           );

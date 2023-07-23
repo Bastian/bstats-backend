@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import * as admin from 'firebase-admin';
 import { DateUtilService } from './date-util.service';
 import { RedisChartsService } from './redis-charts/redis-charts.service';
 import { SingleLineChartData } from './interfaces/data/single-line-chart-data.interface';
 import { ConnectionService } from '../database/connection.service';
-import { FirestoreRatelimiterService } from '../database/firestore-ratelimiter.service';
+import { PostgresService } from 'src/database/postgres.service';
+import * as admin from 'firebase-admin';
 
 @Injectable()
 export class HistoricLineChartDataService {
@@ -12,18 +12,29 @@ export class HistoricLineChartDataService {
     private dateUtilService: DateUtilService,
     private redisChartsService: RedisChartsService,
     private connectionService: ConnectionService,
-    private firestoreRatelimiterService: FirestoreRatelimiterService,
-  ) {}
-
-  private getFirestoreDocument(
-    id: number,
-    tms2000Div1000: number,
-    line: string,
+    private postgresService: PostgresService,
   ) {
-    return admin
-      .firestore()
-      .collection('line-chart-data')
-      .doc(`${id}#${tms2000Div1000}#${line}`);
+    postgresService
+      .getPool()
+      .connect()
+      .then((client) => {
+        client
+          .query(
+            `
+CREATE TABLE IF NOT EXISTS historic_line_chart_data (
+  chartId integer NOT NULL,
+  tms2000 integer NOT NULL,
+  lineName varchar(255) NOT NULL,
+  value real NULL,
+  UNIQUE (chartId, tms2000, lineName)
+);
+      `,
+          )
+          .then(() => {
+            client.release();
+            this.migrateData();
+          });
+      });
   }
 
   async setLineChartData(
@@ -32,70 +43,130 @@ export class HistoricLineChartDataService {
     line: string,
     value: number | null,
   ) {
-    const timestamp = this.dateUtilService.tms2000ToDate(tms2000).getTime();
-    const tms2000Div1000 = this.dateUtilService.dateToTms2000Div1000(
-      new Date(timestamp),
-    );
-
-    await this.firestoreRatelimiterService.checkRatelimitAndIncr('write');
-    await this.getFirestoreDocument(id, tms2000Div1000, line).set(
-      {
-        chartId: id,
-        lineName: line,
-        tms2000Div1000: tms2000Div1000,
-        data: {
-          [timestamp]: value,
-        },
-      },
-      {
-        merge: true,
-      },
+    const pool = this.postgresService.getPool();
+    await pool.query(
+      `
+  INSERT INTO historic_line_chart_data (chartId, tms2000, lineName, value)
+  VALUES ($1, $2, $3, $4)
+  ON CONFLICT (chartId, tms2000, lineName)
+  DO UPDATE SET value = $4;
+      `,
+      [id, tms2000, line, value],
     );
   }
 
-  async bulkSetLineChartData(
+  async batchSetLineChartData(
     id: number,
     line: string,
-    data: [number, number | 'ignored'][],
+    data: [number, number | null][],
   ) {
-    const dataGroupedByTms2000Div1000 = data.reduce(
-      (prev, [timestamp, dataPoint]) => {
-        const tms2000Div1000 = this.dateUtilService.dateToTms2000Div1000(
-          new Date(timestamp),
-        );
-        if (!prev[tms2000Div1000]) {
-          prev[tms2000Div1000] = {};
-        }
-        prev[tms2000Div1000][timestamp] =
-          dataPoint === 'ignored' ? null : dataPoint;
-        return prev;
-      },
-      {},
+    let query = `
+INSERT INTO historic_line_chart_data (chartId, tms2000, lineName, value)
+VALUES
+`;
+    for (let i = 0; i < data.length; i++) {
+      const [tms2000] = data[i];
+      query += `(${id}, ${tms2000}, $${i * 2 + 1}, $${i * 2 + 2}),`;
+    }
+    query = query.slice(0, -1);
+    query += `
+ON CONFLICT (chartId, tms2000, lineName)
+DO UPDATE SET value = EXCLUDED.value;
+    `;
+    const pool = this.postgresService.getPool();
+    await pool.query(
+      query,
+      data.flatMap(([, value]) => [line, value]),
     );
+  }
 
-    for (const tms2000Div1000 of Object.keys(dataGroupedByTms2000Div1000)) {
-      await this.firestoreRatelimiterService.checkRatelimitAndIncr('write');
-      await this.getFirestoreDocument(id, parseInt(tms2000Div1000), line).set(
-        {
-          chartId: id,
-          lineName: line,
-          tms2000Div1000: parseInt(tms2000Div1000),
-          data: dataGroupedByTms2000Div1000[tms2000Div1000],
-        },
-        {
-          merge: true,
-        },
-      );
-      // Clear the cache (if it exists)
+  private async migrateData() {
+    const markLastSync = async () => {
+      const currentTms2000 = this.dateUtilService.dateToTms2000(new Date());
       await this.connectionService
         .getRedis()
-        .del(`history-data:${id}:${line}:${tms2000Div1000}`);
+        .set(`last-sync:3.1`, currentTms2000 - 1);
+    };
+    await markLastSync();
+    if (Math.random() < 99) {
+      //return;
     }
+    for (let i = 140; i < 250; i++) {
+      const data = await admin
+        .firestore()
+        .collection('line-chart-data')
+        .where('chartId', '>=', i * 1000)
+        .where('chartId', '<', (i + 1) * 1000)
+        .get();
+
+      // Process docs in batches of 90
+      for (let j = 0; j < data.docs.length; j += 90) {
+        await Promise.all(
+          data.docs.slice(j, j + 90).map(async (doc) => {
+            const chartId = doc.data().chartId;
+            const lineName = doc.data().lineName;
+            const data = doc.data().data;
+            const tms2000Div1000 = doc.data().tms2000Div1000;
+
+            console.log(
+              'Batch',
+              i,
+              '|',
+              'Migrating data',
+              chartId,
+              lineName,
+              tms2000Div1000,
+              Object.keys(data).length,
+            );
+
+            await this.batchSetLineChartData(
+              chartId,
+              lineName,
+              Object.entries(data).map(([timestamp, value]) => [
+                this.dateUtilService.dateToTms2000(
+                  new Date(parseInt(timestamp)),
+                ),
+                value === 'ignored' ? null : parseInt(value as string),
+              ]),
+            );
+          }),
+        );
+      }
+
+      /*for (const doc of data.docs) {
+        const chartId = doc.data().chartId;
+        const lineName = doc.data().lineName;
+        const data = doc.data().data;
+        const tms2000Div1000 = doc.data().tms2000Div1000;
+
+        console.log(
+          'Batch',
+          i,
+          '|',
+          'Migrating data',
+          chartId,
+          lineName,
+          tms2000Div1000,
+          Object.keys(data).length,
+        );
+
+        await this.batchSetLineChartData(
+          chartId,
+          lineName,
+          Object.entries(data).map(([timestamp, value]) => [
+            this.dateUtilService.dateToTms2000(new Date(parseInt(timestamp))),
+            value === 'ignored' ? null : parseInt(value as string),
+          ]),
+        );
+      }
+    */
+    }
+
+    console.log('Migrated data');
   }
 
   /**
    * Fetches the line chart data from the database.
-   * Automatically accumulates data from multiple documents.
    */
   async getLineChartData(
     id: number,
@@ -103,90 +174,71 @@ export class HistoricLineChartDataService {
     maxElements: number,
     tms2000Last: number = this.dateUtilService.dateToTms2000(new Date()) - 1,
   ): Promise<SingleLineChartData> {
-    const date = this.dateUtilService.tms2000ToDate(tms2000Last);
+    let data: SingleLineChartData = [];
 
-    const currentTms2000Div1000 =
-      this.dateUtilService.dateToTms2000Div1000(date);
+    console.log('Fetching line chart data', id, line, maxElements, tms2000Last);
 
-    // The latest document does most likely not contain the full 1000 data points
-    const elementsInFirstDocument =
-      this.dateUtilService.thirtyMinutesSinceLastTms2000Div1000(date);
+    // Check if in Redis cache
+    const redisLineData = await this.connectionService
+      .getRedis()
+      .get(`history-data:${id}:${line}:${tms2000Last}`);
 
-    // Every document only contains 1000 data points at max
-    const tms2000Div1000sToFetch = [currentTms2000Div1000];
-    while (
-      maxElements -
-        (tms2000Div1000sToFetch.length - 1) * 1000 -
-        elementsInFirstDocument >
-      0
-    ) {
-      tms2000Div1000sToFetch.push(
-        currentTms2000Div1000 - tms2000Div1000sToFetch.length,
+    if (redisLineData) {
+      ///return JSON.parse(redisLineData);
+    }
+
+    const pool = this.postgresService.getPool();
+    const response = await pool.query(
+      `
+SELECT tms2000, value FROM historic_line_chart_data
+WHERE chartId = $1 AND lineName = $2 AND tms2000 <= $3
+ORDER BY tms2000 DESC
+LIMIT $4;
+      `,
+      [id, line, tms2000Last, maxElements],
+    );
+
+    const elements: Record<number, number> = {};
+
+    // Fill with 0s
+    for (let i = 0; i < maxElements; i++) {
+      const timestamp = this.dateUtilService.tms2000ToTimestamp(
+        tms2000Last - i,
       );
+
+      elements[timestamp] = 0;
     }
 
-    const data: SingleLineChartData = [];
-
-    for (const tms2000Div1000 of tms2000Div1000sToFetch) {
-      // To decrease the number for Firestore reads, we cache historic line
-      // chart data in Redis for 1 week when it is requested. So before
-      // we read, we first check if the data is in Redis.
-      const redisLineData = await this.connectionService
-        .getRedis()
-        .get(`history-data:${id}:${line}:${tms2000Div1000}`);
-
-      let lineData:
-        | {
-            [timestamp: number]: number | undefined;
-          }
-        | undefined;
-
-      if (redisLineData) {
-        lineData = JSON.parse(redisLineData);
-      } else {
-        await this.firestoreRatelimiterService.checkRatelimitAndIncr('read');
-        const document = await this.getFirestoreDocument(
-          id,
-          tms2000Div1000,
-          line,
-        ).get();
-
-        lineData = document.data()?.data;
-
-        // Cache the historic data in Redis
-        await this.connectionService
-          .getRedis()
-          .set(
-            `history-data:${id}:${line}:${tms2000Div1000}`,
-            JSON.stringify(lineData ?? {}),
-          );
-        // for 1 week
-        await this.connectionService
-          .getRedis()
-          .expire(
-            `history-data:${id}:${line}:${tms2000Div1000}`,
-            60 * 60 * 24 * 7,
-          );
-      }
-
-      for (let i = 0; i < 1000; i++) {
-        const tms2000 = (tms2000Div1000 + 1) * 1000 - (i + 1);
-        if (tms2000 <= tms2000Last && tms2000Last - tms2000 < maxElements) {
-          const timestamp = this.dateUtilService.tms2000ToTimestamp(tms2000);
-
-          const dataPoint = lineData?.[timestamp];
-          if (dataPoint === null) {
-            continue;
-          }
-          data.push([timestamp, dataPoint ?? 0]);
-        }
-      }
+    for (const row of response.rows) {
+      elements[this.dateUtilService.tms2000ToTimestamp(row.tms2000)] =
+        row.value ?? 0;
     }
+
+    // Convert to array
+    for (const [timestamp, value] of Object.entries(elements)) {
+      data.push([parseInt(timestamp), value]);
+    }
+
+    // Remove rows with null value
+    data = data.filter(([, value]) => value !== null);
+
+    // Sort by timestamp
+    data.sort((a, b) => b[0] - a[0]);
+
+    // Cache in redis for 30 minute
+    await this.connectionService
+      .getRedis()
+      .set(
+        `history-line-data:${id}:${line}:${tms2000Last}`,
+        JSON.stringify(data),
+        'EX',
+        30 * 60,
+      );
 
     return data;
   }
 
-  async moveHistoricRedisDataToFirebase(id: number, line: string) {
+  async moveHistoricRedisDataToPostgres(id: number, line: string) {
     const allDataInRedis = await this.redisChartsService.getFullLineChartData(
       id,
       line,
@@ -218,9 +270,16 @@ export class HistoricLineChartDataService {
       return;
     }
 
-    await this.bulkSetLineChartData(id, line, filteredData);
-    await markLastSync();
+    for (const [timestamp, value] of filteredData) {
+      await this.setLineChartData(
+        id,
+        this.dateUtilService.dateToTms2000(new Date(timestamp)),
+        line,
+        value === 'ignored' ? null : value,
+      );
+    }
 
+    await markLastSync();
     await this.redisChartsService.deleteLineChartData(
       id,
       line,
