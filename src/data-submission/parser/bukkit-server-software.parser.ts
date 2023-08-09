@@ -56,6 +56,8 @@ export class BukkitServerSoftwareParser implements Parser {
       softwareName = 'Magma';
     } else if (lowercaseBukkitVersion.indexOf('titanium') !== -1) {
       softwareName = 'Titanium';
+    } else if (lowercaseBukkitVersion.indexOf('gale') !== -1) {
+      softwareName = 'Gale';
     }
 
     return [
