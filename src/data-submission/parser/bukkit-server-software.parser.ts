@@ -34,6 +34,8 @@ export class BukkitServerSoftwareParser implements Parser {
       softwareName = 'TacoSpigot';
     } else if (lowercaseBukkitVersion.indexOf('paper') !== -1) {
       softwareName = 'Paper';
+    } else if (lowercaseBukkitVersion.indexOf('folia') !== -1) {
+      softwareName = 'Folia';
     } else if (lowercaseBukkitVersion.indexOf('spigot') !== -1) {
       softwareName = 'Spigot';
     } else if (lowercaseBukkitVersion.indexOf('catserver') !== -1) {
