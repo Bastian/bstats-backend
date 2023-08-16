@@ -34,6 +34,8 @@ export class BukkitServerSoftwareParser implements Parser {
       softwareName = 'TacoSpigot';
     } else if (lowercaseBukkitVersion.indexOf('paper') !== -1) {
       softwareName = 'Paper';
+    } else if (lowercaseBukkitVersion.indexOf('folia') !== -1) {
+      softwareName = 'Folia';
     } else if (lowercaseBukkitVersion.indexOf('spigot') !== -1) {
       softwareName = 'Spigot';
     } else if (lowercaseBukkitVersion.indexOf('catserver') !== -1) {
@@ -55,9 +57,11 @@ export class BukkitServerSoftwareParser implements Parser {
     } else if (lowercaseBukkitVersion.indexOf('magma') !== -1) {
       softwareName = 'Magma';
     } else if (lowercaseBukkitVersion.indexOf('titanium') !== -1) {
-      softwareName = "Titanium";
+      softwareName = 'Titanium';
     } else if (lowercaseBukkitVersion.indexOf('scissors') !== -1) {
-      softwareName = "Scissors";
+      softwareName = 'Scissors';
+    } else if (lowercaseBukkitVersion.indexOf('gale') !== -1) {
+      softwareName = 'Gale';
     }
 
     return [
