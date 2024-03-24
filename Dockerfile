@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:16 as builder
 
 WORKDIR /app
 
@@ -6,13 +6,17 @@ COPY . .
 
 # Install app dependencies and build application
 RUN npm install
-RUN npm i -g @nestjs/cli
 RUN npm run build
 
-# We have to set the environment variable afterwards or it will not be able to
-# build the project.
-ENV NODE_ENV=production
+FROM oven/bun:1
 
-EXPOSE 3001
+WORKDIR /app
 
-CMD [ "npm", "run", "start:prod" ]
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+USER bun
+EXPOSE 3000/tcp
+ENTRYPOINT [ "bun", "run", "dist/main.js" ]
+
