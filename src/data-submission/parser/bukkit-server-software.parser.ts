@@ -60,6 +60,8 @@ export class BukkitServerSoftwareParser implements Parser {
       softwareName = 'Titanium';
     } else if (lowercaseBukkitVersion.indexOf('scissors') !== -1) {
       softwareName = 'Scissors';
+    } else if (lowercaseBukkitVersion.indexOf('canvas') !== -1) {
+      softwareName = 'Canvas';
     } else if (lowercaseBukkitVersion.indexOf('gale') !== -1) {
       softwareName = 'Gale';
     }
