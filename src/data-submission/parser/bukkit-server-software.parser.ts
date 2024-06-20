@@ -13,54 +13,49 @@ export class BukkitServerSoftwareParser implements Parser {
     submitDataDto: SubmitDataDto,
     requestRandom: number,
   ): SubmitDataCustomChartDto[] | null {
-    const { bukkitVersion } = submitDataDto;
+    const { bukkitName } = submitDataDto;
 
-    if (typeof bukkitVersion !== 'string') {
+    if (typeof bukkitName !== 'string') {
       return null;
     }
 
-    // If it doesn't contain "MC: ", it's from an old bStats Metrics class
-    if (bukkitVersion.indexOf('MC:') === -1) {
-      return null;
-    }
-
-    const lowercaseBukkitVersion = bukkitVersion.toLowerCase();
+    const lowercaseBukkitSoftware = bukkitName.toLowerCase();
     let softwareName = 'Unknown';
 
-    // Maybe there's a good regex pattern, but sometimes the bukkitVersion looks pretty strange
-    if (lowercaseBukkitVersion.indexOf('bukkit') !== -1) {
+    // Maybe there's a good regex pattern, but sometimes the bukkitSoftware looks pretty strange
+    if (lowercaseBukkitSoftware.indexOf('bukkit') !== -1) {
       softwareName = 'Bukkit';
-    } else if (lowercaseBukkitVersion.indexOf('taco') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('taco') !== -1) {
       softwareName = 'TacoSpigot';
-    } else if (lowercaseBukkitVersion.indexOf('paper') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('paper') !== -1) {
       softwareName = 'Paper';
-    } else if (lowercaseBukkitVersion.indexOf('folia') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('folia') !== -1) {
       softwareName = 'Folia';
-    } else if (lowercaseBukkitVersion.indexOf('spigot') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('spigot') !== -1) {
       softwareName = 'Spigot';
-    } else if (lowercaseBukkitVersion.indexOf('catserver') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('catserver') !== -1) {
       softwareName = 'CatServer';
-    } else if (lowercaseBukkitVersion.indexOf('lava') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('lava') !== -1) {
       softwareName = 'Lava';
-    } else if (lowercaseBukkitVersion.indexOf('mohist') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('mohist') !== -1) {
       softwareName = 'Mohist';
-    } else if (lowercaseBukkitVersion.indexOf('tuinity') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('tuinity') !== -1) {
       softwareName = 'Tuinity';
-    } else if (lowercaseBukkitVersion.indexOf('purpur') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('purpur') !== -1) {
       softwareName = 'Purpur';
-    } else if (lowercaseBukkitVersion.indexOf('airplane') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('airplane') !== -1) {
       softwareName = 'Airplane';
-    } else if (lowercaseBukkitVersion.indexOf('yatopia') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('yatopia') !== -1) {
       softwareName = 'Yatopia';
-    } else if (lowercaseBukkitVersion.indexOf('arclight') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('arclight') !== -1) {
       softwareName = 'Arclight';
-    } else if (lowercaseBukkitVersion.indexOf('magma') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('magma') !== -1) {
       softwareName = 'Magma';
-    } else if (lowercaseBukkitVersion.indexOf('titanium') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('titanium') !== -1) {
       softwareName = 'Titanium';
-    } else if (lowercaseBukkitVersion.indexOf('scissors') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('scissors') !== -1) {
       softwareName = 'Scissors';
-    } else if (lowercaseBukkitVersion.indexOf('gale') !== -1) {
+    } else if (lowercaseBukkitSoftware.indexOf('gale') !== -1) {
       softwareName = 'Gale';
     }
 
