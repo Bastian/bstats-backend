@@ -1,0 +1,445 @@
+### send paper
+POST http://localhost:3001/legacy/submitData/server-implementation
+Accept: application/json
+Content-Type: application/json
+User-Agent: MC-Server/1.0
+
+{
+  "serverUUID": "fe3969d1-e683-4f66-82bb-b96e283f5792",
+  "osVersion": "10.0",
+  "plugins": [
+    {
+      "pluginName": "Paper",
+      "customCharts": [
+        {
+          "chartId": "minecraft_version",
+          "data": {
+            "value": "1.21"
+          }
+        },
+        {
+          "chartId": "online_mode",
+          "data": {
+            "value": "online"
+          }
+        },
+        {
+          "chartId": "paper_version",
+          "data": {
+            "value": "unknown"
+          }
+        },
+        {
+          "chartId": "java_version",
+          "data": {
+            "values": {
+              "Java 21": {
+                "21.0.3": 1
+              }
+            }
+          }
+        },
+        {
+          "chartId": "legacy_plugins",
+          "data": {
+            "values": {
+              "0 ?": {
+                "0": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "osArch": "amd64",
+  "osName": "Windows 11",
+  "coreCount": 24
+}
+
+### send test plugin paper 1.21
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "1.21-38-1f5db50 (MC: 1.21)",
+  "bukkitName": "Paper",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "7386d410-f71e-447c-b356-ee809c7db098",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin paper 1.20
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "git-Paper-196 (MC: 1.20.1)",
+  "bukkitName": "Paper",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "0fde82f6-133c-4f06-b010-f9611d57fc98",
+  "metricsVersion": "3.0.2"
+}
+
+
+### send test plugin spigot 1.21
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "4226-Spigot-146439e-2889b3a (MC: 1.21)",
+  "bukkitName": "CraftBukkit",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "42f7545e-ddda-4177-92f1-ea6e5a5b608a",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin purpur 1.21
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "1.21-2250-797ce6b (MC: 1.21)",
+  "bukkitName": "Purpur",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "28349076-d5e0-4af2-9272-22f38a09c9be",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin purpur 1.20
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "git-Purpur-2062 (MC: 1.20.1)",
+  "bukkitName": "Purpur",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "28349076-d5e0-4af2-9272-22f38a09c9be",
+  "metricsVersion": "3.0.2"
+}
+
+
+### send test plugin glowstone 1.12
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "2021.7.0-SNAPSHOT.09043bd (MC: 1.12.2)",
+  "bukkitName": "Glowstone",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "0fde82f6-133c-4f06-b010-f9611d57fc98",
+  "metricsVersion": "3.0.2"
+}
+
+
+### send test plugin "craftbukkit" 1.21
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "4226-Bukkit-2889b3a (MC: 1.21)",
+  "bukkitName": "CraftBukkit",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "7386d410-f71e-447c-b356-ee809c7db098",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin catserver 1.18
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "1.18.2-edda1229 (MC: 1.18.2)",
+  "bukkitName": "CatServer",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "42f7545e-ddda-4177-92f1-ea6e5a5b608a",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin folia 1.20.6
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "1.20.6-5-d797082 (MC: 1.20.6)",
+  "bukkitName": "Folia",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "0fde82f6-133c-4f06-b010-f9611d57fc98",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin folia 1.20.1
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "git-Folia-17 (MC: 1.20.1)",
+  "bukkitName": "Folia",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "0fde82f6-133c-4f06-b010-f9611d57fc98",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin arclight 1.21
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "arclight-1.21-1.0.0-SNAPSHOT-b3349e9 (MC: 1.21)",
+  "bukkitName": "Arclight",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "7386d410-f71e-447c-b356-ee809c7db098",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin tacospigot 1.9.4
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "git-TacoSpigot-\"af15657\" (MC: 1.9.4)",
+  "bukkitName": "Paper",
+  "javaVersion": "21.0.2",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "42f7545e-ddda-4177-92f1-ea6e5a5b608a",
+  "metricsVersion": "3.0.2"
+}
