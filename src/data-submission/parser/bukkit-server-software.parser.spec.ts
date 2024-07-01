@@ -40,7 +40,7 @@ describe('bukkit-server-software.parser', () => {
         expected: 'Purpur',
       },
       {
-        name: 'Glowstone 1.18',
+        name: 'Glowstone 1.12.2',
         bukkitVersion: '2021.7.0-SNAPSHOT.09043bd (MC: 1.12.2)',
         bukkitName: 'Glowstone',
         expected: 'Glowstone',
