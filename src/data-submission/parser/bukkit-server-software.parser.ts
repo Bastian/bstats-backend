@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   SubmitDataCustomChartDto,
   SubmitDataDto,
@@ -6,14 +6,36 @@ import {
 import { Parser } from './interfaces/parser.interface';
 import { DefaultChart } from '../../charts/interfaces/charts/default-chart.interface';
 
+const serverSoftwareBrands = new Map<string, string>();
+serverSoftwareBrands.set('bukkit', 'Bukkit');
+serverSoftwareBrands.set('taco', 'TacoSpigot');
+serverSoftwareBrands.set('paper', 'Paper');
+serverSoftwareBrands.set('folia', 'Folia');
+serverSoftwareBrands.set('spigot', 'Spigot');
+serverSoftwareBrands.set('catserver', 'CatServer');
+serverSoftwareBrands.set('lava', 'Lava');
+serverSoftwareBrands.set('mohist', 'Mohist');
+serverSoftwareBrands.set('tuinity', 'Tuinity');
+serverSoftwareBrands.set('purpur', 'Purpur');
+serverSoftwareBrands.set('airplane', 'Airplane');
+serverSoftwareBrands.set('yatopia', 'Yatopia');
+serverSoftwareBrands.set('arclight', 'Arclight');
+serverSoftwareBrands.set('magma', 'Magma');
+serverSoftwareBrands.set('titanium', 'Titanium');
+serverSoftwareBrands.set('scissors', 'Scissors');
+serverSoftwareBrands.set('gale', 'Gale');
+serverSoftwareBrands.set('glowstone', 'Glowstone');
+
 @Injectable()
 export class BukkitServerSoftwareParser implements Parser {
+  private readonly logger = new Logger(BukkitServerSoftwareParser.name);
+
   parse(
     chart: DefaultChart,
     submitDataDto: SubmitDataDto,
     requestRandom: number,
   ): SubmitDataCustomChartDto[] | null {
-    const { bukkitVersion } = submitDataDto;
+    const { bukkitVersion, bukkitName } = submitDataDto;
 
     if (typeof bukkitVersion !== 'string') {
       return null;
@@ -24,44 +46,35 @@ export class BukkitServerSoftwareParser implements Parser {
       return null;
     }
 
-    const lowercaseBukkitVersion = bukkitVersion.toLowerCase();
     let softwareName = 'Unknown';
 
-    // Maybe there's a good regex pattern, but sometimes the bukkitVersion looks pretty strange
-    if (lowercaseBukkitVersion.indexOf('bukkit') !== -1) {
-      softwareName = 'Bukkit';
-    } else if (lowercaseBukkitVersion.indexOf('taco') !== -1) {
-      softwareName = 'TacoSpigot';
-    } else if (lowercaseBukkitVersion.indexOf('paper') !== -1) {
-      softwareName = 'Paper';
-    } else if (lowercaseBukkitVersion.indexOf('folia') !== -1) {
-      softwareName = 'Folia';
-    } else if (lowercaseBukkitVersion.indexOf('spigot') !== -1) {
-      softwareName = 'Spigot';
-    } else if (lowercaseBukkitVersion.indexOf('catserver') !== -1) {
-      softwareName = 'CatServer';
-    } else if (lowercaseBukkitVersion.indexOf('lava') !== -1) {
-      softwareName = 'Lava';
-    } else if (lowercaseBukkitVersion.indexOf('mohist') !== -1) {
-      softwareName = 'Mohist';
-    } else if (lowercaseBukkitVersion.indexOf('tuinity') !== -1) {
-      softwareName = 'Tuinity';
-    } else if (lowercaseBukkitVersion.indexOf('purpur') !== -1) {
-      softwareName = 'Purpur';
-    } else if (lowercaseBukkitVersion.indexOf('airplane') !== -1) {
-      softwareName = 'Airplane';
-    } else if (lowercaseBukkitVersion.indexOf('yatopia') !== -1) {
-      softwareName = 'Yatopia';
-    } else if (lowercaseBukkitVersion.indexOf('arclight') !== -1) {
-      softwareName = 'Arclight';
-    } else if (lowercaseBukkitVersion.indexOf('magma') !== -1) {
-      softwareName = 'Magma';
-    } else if (lowercaseBukkitVersion.indexOf('titanium') !== -1) {
-      softwareName = 'Titanium';
-    } else if (lowercaseBukkitVersion.indexOf('scissors') !== -1) {
-      softwareName = 'Scissors';
-    } else if (lowercaseBukkitVersion.indexOf('gale') !== -1) {
-      softwareName = 'Gale';
+    // First try to find the software name based on the bukkit version
+    const lowercaseBukkitVersion = bukkitVersion.toLowerCase();
+    for (const [brand, name] of serverSoftwareBrands.entries()) {
+      if (lowercaseBukkitVersion.indexOf(brand) !== -1) {
+        softwareName = name;
+        break;
+      }
+    }
+
+    // then try to find the software name based on the bukkit name
+    if (softwareName === 'Unknown' && typeof bukkitName === 'string') {
+      const lowercaseBukkitName = bukkitName.toLowerCase();
+      const maybeSoftwareName = serverSoftwareBrands.get(lowercaseBukkitName);
+      if (maybeSoftwareName) {
+        softwareName = maybeSoftwareName;
+      }
+    }
+
+    // ultimately we log a message for further investigation
+    if (softwareName === 'Unknown') {
+      this.logger.log(
+        'Unknown server software: bukkitVersion="' +
+          bukkitVersion +
+          '", bukkitName="' +
+          bukkitName +
+          '"',
+      );
     }
 
     return [
