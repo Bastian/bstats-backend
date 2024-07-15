@@ -81,6 +81,24 @@ describe('bukkit-server-software.parser', () => {
         bukkitName: 'Paper',
         expected: 'TacoSpigot',
       },
+      {
+        name: 'Leaves 1.20.6',
+        bukkitVersion: '1.20.6-215-e234432 (MC: 1.20.6)',
+        bukkitName: 'Leaves',
+        expected: 'Leaves',
+      },
+      {
+        name: 'Leaf 1.21',
+        bukkitVersion: '1.21-DEV-3d7de13 (MC: 1.21)',
+        bukkitName: 'Leaf',
+        expected: 'Leaf',
+      },
+      {
+        name: 'Pufferfish 1.20.4',
+        bukkitVersion: 'git-Pufferfish-52 (MC: 1.20.4)',
+        bukkitName: 'Pufferfish',
+        expected: 'Pufferfish',
+      },
     ];
 
     testCases.forEach((testCase) => {
