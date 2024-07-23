@@ -443,3 +443,99 @@ User-Agent: Metrics-Service/1
   "serverUUID": "42f7545e-ddda-4177-92f1-ea6e5a5b608a",
   "metricsVersion": "3.0.2"
 }
+
+### send test plugin leaves 1.20.6
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "1.20.6-215-e234432 (MC: 1.20.6)",
+  "bukkitName": "Leaves",
+  "javaVersion": "22.0.1",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "28349076-d5e0-4af2-9272-22f38a09c9be",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin leaf 1.21
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "1.21-DEV-3d7de13 (MC: 1.21)",
+  "bukkitName": "Leaf",
+  "javaVersion": "22.0.1",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "28349076-d5e0-4af2-9272-22f38a09c9be",
+  "metricsVersion": "3.0.2"
+}
+
+### send test plugin pufferfish 1.20.4
+POST http://localhost:3001/data/bukkit
+Accept: application/json
+Content-Type: application/json
+User-Agent: Metrics-Service/1
+
+{
+  "playerAmount": 0,
+  "onlineMode": 1,
+  "bukkitVersion": "git-Pufferfish-52 (MC: 1.20.4)",
+  "bukkitName": "Pufferfish",
+  "javaVersion": "22.0.1",
+  "osName": "Windows 11",
+  "osArch": "amd64",
+  "osVersion": "10.0",
+  "coreCount": 24,
+  "service": {
+    "pluginVersion": "1.0.0-SNAPSHOT",
+    "id": 1234,
+    "customCharts": [
+      {
+        "chartId": "chart_id",
+        "data": {
+          "value": "My value"
+        }
+      }
+    ]
+  },
+  "serverUUID": "28349076-d5e0-4af2-9272-22f38a09c9be",
+  "metricsVersion": "3.0.2"
+}
