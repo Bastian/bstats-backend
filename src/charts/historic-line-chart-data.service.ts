@@ -5,6 +5,7 @@ import { SingleLineChartData } from './interfaces/data/single-line-chart-data.in
 import { ConnectionService } from '../database/connection.service';
 import { PostgresService } from 'src/database/postgres.service';
 import * as admin from 'firebase-admin';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class HistoricLineChartDataService {
@@ -13,7 +14,9 @@ export class HistoricLineChartDataService {
     private redisChartsService: RedisChartsService,
     private connectionService: ConnectionService,
     private postgresService: PostgresService,
+    private configService: ConfigService,
   ) {
+    const shardNumber = this.configService.get<number>('SHARD_NUMBER', 0);
     postgresService
       .getPool()
       .connect()
@@ -32,7 +35,9 @@ CREATE TABLE IF NOT EXISTS historic_line_chart_data (
           )
           .then(() => {
             client.release();
-            this.migrateData();
+            if (shardNumber === 0) {
+              this.migrateData();
+            }
           });
       });
   }
@@ -80,26 +85,26 @@ DO UPDATE SET value = EXCLUDED.value;
     );
   }
 
+  /**
+   * Migrates the data from Firestore to Postgres.
+   *
+   * Can be removed after migration is done.
+   */
   private async migrateData() {
-    const markLastSync = async () => {
-      const currentTms2000 = this.dateUtilService.dateToTms2000(new Date());
-      await this.connectionService
-        .getRedis()
-        .set(`last-sync:3.1`, currentTms2000 - 1);
-    };
-    await markLastSync();
-    if (Math.random() < 99) {
-      //return;
-    }
-    for (let i = 140; i < 250; i++) {
+    // We process data in batches, or it would be too much data to handle at once.
+    // At the time of writing this comment (2025-01-08), the highest chartId is
+    // 298582. So 3100 * 100 = 310000 is more than enough for the next weeks.
+    for (let i = 0; i < 3100; i++) {
       const data = await admin
         .firestore()
         .collection('line-chart-data')
-        .where('chartId', '>=', i * 1000)
-        .where('chartId', '<', (i + 1) * 1000)
+        .where('chartId', '>=', i * 100)
+        .where('chartId', '<', (i + 1) * 100)
         .get();
 
       // Process docs in batches of 90
+      // Why 90? I have no clue, this second sentence was added years after the
+      // one above. But I'm sure there was a good reason for it.
       for (let j = 0; j < data.docs.length; j += 90) {
         await Promise.all(
           data.docs.slice(j, j + 90).map(async (doc) => {
@@ -132,34 +137,6 @@ DO UPDATE SET value = EXCLUDED.value;
           }),
         );
       }
-
-      /*for (const doc of data.docs) {
-        const chartId = doc.data().chartId;
-        const lineName = doc.data().lineName;
-        const data = doc.data().data;
-        const tms2000Div1000 = doc.data().tms2000Div1000;
-
-        console.log(
-          'Batch',
-          i,
-          '|',
-          'Migrating data',
-          chartId,
-          lineName,
-          tms2000Div1000,
-          Object.keys(data).length,
-        );
-
-        await this.batchSetLineChartData(
-          chartId,
-          lineName,
-          Object.entries(data).map(([timestamp, value]) => [
-            this.dateUtilService.dateToTms2000(new Date(parseInt(timestamp))),
-            value === 'ignored' ? null : parseInt(value as string),
-          ]),
-        );
-      }
-    */
     }
 
     console.log('Migrated data');
