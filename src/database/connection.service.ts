@@ -16,9 +16,9 @@ export class ConnectionService {
     };
 
     if (useCluster) {
-      this.redis = new Redis.Cluster([node], { enableAutoPipelining: true });
+      this.redis = new Redis.Cluster([node], { enableAutoPipelining: false });
     } else {
-      this.redis = new Redis({ ...node, enableAutoPipelining: true });
+      this.redis = new Redis({ ...node, enableAutoPipelining: false });
     }
   }
 
