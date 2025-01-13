@@ -64,7 +64,7 @@ export class ChartsService {
   }
 
   /**
-   * Merges the data from redis and Firestore
+   * Merges the data from redis and the SQL database.
    */
   private async findLineChartData(
     id: number,
@@ -92,8 +92,8 @@ export class ChartsService {
       startTms2000 - parseInt(lastSyncTms2000),
     );
 
-    // And the historic data from firestore
-    const dataFromFirestore =
+    // And the historic data from the SQL database
+    const dataFromDatabase =
       await this.historicLineChartDataService.getLineChartData(
         id,
         line,
@@ -101,7 +101,7 @@ export class ChartsService {
         parseInt(lastSyncTms2000),
       );
 
-    return [...(dataFromRedis ?? []), ...dataFromFirestore];
+    return [...(dataFromRedis ?? []), ...dataFromDatabase];
   }
 
   async findByServiceIdAndCustomId(

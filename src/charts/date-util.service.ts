@@ -19,7 +19,7 @@ export class DateUtilService {
   }
 
   /**
-   * Converts tms2000 to timestamo.
+   * Converts tms2000 to timestamp.
    */
   tms2000ToTimestamp(tms2000: number): number {
     return this.PAST + tms2000 * 1000 * 60 * 30;
