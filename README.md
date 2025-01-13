@@ -37,15 +37,6 @@ following environment variables:
 | REDIS_HOST        | 127.0.0.1     | The Redis host or the host of a cluster node       |
 | REDIS_PORT        | 6379          | The port of the Redis instance of the cluster node |
 
-## Firebase
-
-bStats uses Firebase Auth for authentication.
-Thus, you have to create a [Firebase](https://firebase.google.com/) project and set the following environment variables:
-
-| Variable                       | Default Value               | Description                                                                         |
-| ------------------------------ | --------------------------- | ----------------------------------------------------------------------------------- |
-| GOOGLE_APPLICATION_CREDENTIALS | ./service-account-file.json | The path to your service account file (Can be downloaded from the Firebase Console) |
-
 ## Sharding
 
 If multiple instance of the bStats backend are running as a cluster, you must configure the following environment variables:

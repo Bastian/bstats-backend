@@ -1,6 +1,3 @@
-# Firebase service account file
-service-account-file.json
-
 # Redis Data Volume
 /volume/redis/redis-data
 

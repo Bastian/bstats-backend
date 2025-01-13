@@ -33,7 +33,6 @@
     "chartjs-node-canvas": "^4.1.6",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "firebase-admin": "^9.4.1",
     "geoip-lite": "^1.4.7",
     "ioredis": "^5.3.2",
     "moment": "^2.29.4",
