@@ -4,8 +4,8 @@ This document describes what keys and values are used in the Redis database.
 
 ## Legend / Explanations
 
-* Fields in hashes starting with `@` in this document are optional fields which may be null. The fields don’t really start
-  with an `@`, it’s just to clarify.
+* Fields in hashes starting with `?` in this document are optional fields which may be null. The fields don’t really start
+  with an `?`, it’s just to clarify.
 * `<xyz>` in key names should be replaced with the corresponding value (e.g. `users:<username>` becomes
   `users:BtoBastian`).
 * `<xyz[L]>` in key names, means that `<xyz>` is in lower case (e.g. `users:<username[L]>` becomes `users:btobastian`).
@@ -18,7 +18,7 @@ This document describes what keys and values are used in the Redis database.
 Key | Description
 --- | ---
 `users.usernames | A set with all usernames.
-`users:<username[L]> | A hash with the following fields: "name", "password", @"admin" (true if set).
+`users:<username[L]> | A hash with the following fields: "name", "password", ?"admin" (true if set).
 `users.index.plugins.username:<username[L]>` | A set with all plugins (ids) of the user.
 
 ## Ratelimits
@@ -42,11 +42,11 @@ Bar Charts | `data:{<pluginId>}.<chartUid>.<tms2000>` | A hash. The field name i
 Key | Description
 --- | ---
 `plugins.ids` | A set with all plugin id
-`plugins:<pluginId>` | A hash with the following fields: "name", "software", "charts" (as json array with the real ids), "owner", @"global" (true if set)
+`plugins:<pluginId>` | A hash with the following fields: "name", "software", "charts" (as json array with the real ids), "owner", ?"global" (true if set)
 `plugins.index.id.url+name:<softwareUrl[L]>.<pluginName[L]>` | A string which stores the plugin id. Used to get the id of a plugin by software url and name.
 `plugins.id-increment` | A string (in form of an integer). Increments every time a new plugin is added.
 `software.ids` | A set with all software ids
-`software:<softwareId>` | A hash with the following fields: "name", "url", @"globalPlugin", @"metricsClass", @"classCreation", "maxRequestsPerIp", "defaultCharts", @"hideInPluginList" (true if set)
+`software:<softwareId>` | A hash with the following fields: "name", "url", ?"globalPlugin", ?"metricsClass", ?"classCreation", "maxRequestsPerIp", "defaultCharts", ?"hideInPluginList" (true if set)
 `software.index.id.url:<url>` | A string which stores the software id. Used to get the id of the software by its url.
 `software.id-increment` | A string (in form of an integer). Increments every time a new software is added.
 `charts.uids` | A set with all chart uids
