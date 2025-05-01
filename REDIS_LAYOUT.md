@@ -17,8 +17,8 @@ This document describes what keys and values are used in the Redis database.
 
 Key | Description
 --- | ---
-`users.usernames | A set with all usernames.
-`users:<username[L]> | A hash with the following fields: "name", "password", ?"admin" (true if set).
+`users.usernames` | A set with all usernames.
+`users:<username[L]>` | A hash with the following fields: "name", "password", ?"admin" (true if set).
 `users.index.plugins.username:<username[L]>` | A set with all plugins (ids) of the user.
 
 ## Ratelimits
@@ -58,7 +58,7 @@ Key | Description
 
 Key | Description
 --- | ---
-`signature.cache:<tms2000>.<uid> | A svg string. The uid is the unique id of the signature. At the moment it is just the plugin id.
+`signature.cache:<tms2000>.<uid>` | A svg string. The uid is the unique id of the signature. At the moment it is just the plugin id.
 
 ## Cache
 
