@@ -50,7 +50,7 @@ Key | Description
 `software.index.id.url:<url>` | A string which stores the software id. Used to get the id of the software by its url.
 `software.id-increment` | A string (in form of an integer). Increments every time a new software is added.
 `charts.uids` | A set with all chart uids
-`charts:<chartUid>` | A hash with the following fields: "id" (the user provided one!), "type", "position", "title", "default" (true if set), "data" (as json object)
+`charts:<chartUid>` | A hash with the following fields: "id" (the user provided one!), "type", "pluginId", "position", "title", "default" (true if set), "data" (as json object)
 `charts.index.uid.pluginId+chartId:<pluginId>.<chartId>` | A string which stores the chart uid. Used to get the uid of a chart by plugin id and chart id.
 `charts.uid-increment` | A string (in form of an integer). Increments every time a new chart is added.
 
