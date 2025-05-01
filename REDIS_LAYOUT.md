@@ -13,6 +13,14 @@ This document describes what keys and values are used in the Redis database.
   parameters are in the format
   `identifier.index.returnedvalue.parameter1+parameter2:<parameter1>.<parameter2>`
 
+## Accounts
+
+Key | Description
+--- | ---
+`users.usernames | A set with all usernames.
+`users:<username[L]> | A hash with the following fields: "name", "password", @"admin" (true if set).
+`users.index.plugins.username:<username[L]>` | A set with all plugins (ids) of the user.
+
 ## Ratelimits
 
 Key | Description
@@ -45,6 +53,12 @@ Key | Description
 `charts:<chartUid>` | A hash with the following fields: "id" (the user provided one!), "type", "position", "title", "default" (true if set), "data" (as json object)
 `charts.index.uid.pluginId+chartId:<pluginId>.<chartId>` | A string which stores the chart uid. Used to get the uid of a chart by plugin id and chart id.
 `charts.uid-increment` | A string (in form of an integer). Increments every time a new chart is added.
+
+## Signature Images
+
+Key | Description
+--- | ---
+`signature.cache:<tms2000>.<uid> | A svg string. The uid is the unique id of the signature. At the moment it is just the plugin id.
 
 ## Cache
 
