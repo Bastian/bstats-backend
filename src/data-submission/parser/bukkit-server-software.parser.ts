@@ -28,6 +28,15 @@ serverSoftwareBrands.set('glowstone', 'Glowstone'); // https://github.com/Glowst
 serverSoftwareBrands.set('pufferfish', 'Pufferfish'); // https://github.com/pufferfish-gg/Pufferfish
 serverSoftwareBrands.set('leaves', 'Leaves'); // https://github.com/LeavesMC/Leaves
 serverSoftwareBrands.set('leaf', 'Leaf'); // https://github.com/Winds-Studio/Leaf
+serverSoftwareBrands.set('universespigot', 'UniverseSpigot'); // TODO: Find link
+serverSoftwareBrands.set('advancedslimepaper', 'AdvancedSlimePaper'); //github.com/InfernalSuite/AdvancedSlimePaper
+serverSoftwareBrands.set('carbon', 'Carbon'); // https://github.com/InfernalSuite/AdvancedSlimePaper
+serverSoftwareBrands.set('ketting', 'Ketting'); // https://github.com/kettingpowered/Ketting-1-20-x
+serverSoftwareBrands.set('axolotlspigot', 'AxolotlSpigot'); // https://www.axolotlspigot.com/
+serverSoftwareBrands.set('axolotl', 'AxolotlSpigot'); // https://www.axolotlspigot.com/
+serverSoftwareBrands.set('plazma', 'Plazma'); // https://github.com/PlazmaMC/PlazmaBukkit
+serverSoftwareBrands.set('slimeworldmanager', 'SlimeWorldManager'); // https://www.spigotmc.org/resources/slimeworldmanager.69974/ EOL: Now AdvancedSlimePaper
+serverSoftwareBrands.set('divinemc', 'DivineMC'); // https://github.com/BX-Team/DivineMC
 
 @Injectable()
 export class BukkitServerSoftwareParser implements Parser {

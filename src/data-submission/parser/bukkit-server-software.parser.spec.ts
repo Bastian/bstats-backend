@@ -99,6 +99,67 @@ describe('bukkit-server-software.parser', () => {
         bukkitName: 'Pufferfish',
         expected: 'Pufferfish',
       },
+      {
+        name: 'UniverseSpigot 1.21.4',
+        bukkitVersion: '1.21.4-4f6cdd2 (MC: 1.21.4)',
+        bukkitName: 'UniverseSpigot',
+        expected: 'UniverseSpigot',
+      },
+      {
+        name: 'AdvancedSlimePaper 1.21.1',
+        bukkitVersion: '1.21.1-16392-ba950ec (MC: 1.21.1)',
+        bukkitName: 'AdvancedSlimePaper',
+        expected: 'AdvancedSlimePaper',
+      },
+      {
+        name: 'Carbon 1.8.8',
+        bukkitVersion: 'git-Carbon-"b98d6e2f" (MC: 1.8.8)',
+        bukkitName: 'CraftBukkit',
+        expected: 'Carbon',
+      },
+      {
+        name: 'Ketting 1.20.1',
+        bukkitVersion: 'git-ketting-1.20.1-0.4.14 (MC: 1.20.1)',
+        bukkitName: 'CraftBukkit',
+        expected: 'Ketting',
+      },
+      {
+        name: 'AxolotlSpigot 1.20.4',
+        bukkitVersion: 'git-Axolotl-"228c3df" (MC: 1.20.4)',
+        bukkitName: 'AxolotlSpigot',
+        expected: 'AxolotlSpigot',
+      },
+      {
+        name: 'AxolotlSpigot 1.21.1',
+        bukkitVersion: '1.21.1-DEV-393582c (MC: 1.21.1)',
+        bukkitName: 'Axolotl',
+        // I just assume it's the same?
+        expected: 'AxolotlSpigot',
+      },
+      {
+        name: 'Plazma 1.20.4',
+        bukkitVersion: 'git-Plazma-"3972882" (MC: 1.20.4)',
+        bukkitName: 'Plazma',
+        expected: 'Plazma',
+      },
+      {
+        name: 'SlimeWorldManager 1.20.4',
+        bukkitVersion: 'git-SlimeWorldManager-15679 (MC: 1.20.4)',
+        bukkitName: 'SlimeWorldManager',
+        expected: 'SlimeWorldManager',
+      },
+      {
+        name: 'DivineMC 1.20.4',
+        bukkitVersion: 'git-DivineMC-"ab0f2e9" (MC: 1.20.4)',
+        bukkitName: 'DivineMC',
+        expected: 'DivineMC',
+      },
+      {
+        name: 'DivineMC 1.21.4',
+        bukkitVersion: '1.21.4-476-c0ca1f9 (MC: 1.21.4)',
+        bukkitName: 'DivineMC',
+        expected: 'DivineMC',
+      },
     ];
 
     testCases.forEach((testCase) => {
