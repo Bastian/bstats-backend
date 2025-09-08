@@ -21,6 +21,12 @@ Key | Description
 `users:<username[L]>` | A hash with the following fields: "name", "password", ?"admin" (true if set).
 `users.index.plugins.username:<username[L]>` | A set with all plugins (ids) of the user.
 
+## Password Reset
+
+Key | Description
+--- | ---
+`password_reset:<token>` | A hash with the following fields: "username", "expiry" (timestamp), "created_by" (admin username), "created_at" (timestamp). Expires after 7 days.
+
 ## Ratelimits
 
 Key | Description
