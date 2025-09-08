@@ -124,7 +124,7 @@ LIMIT $4;
 
     for (const row of response.rows) {
       elements[this.dateUtilService.tms2000ToTimestamp(row.tms2000)] =
-        row.value ?? 0;
+        row.value ?? null;
     }
 
     // Convert to array
