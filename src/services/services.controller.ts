@@ -6,10 +6,13 @@ import {
   ParseBoolPipe,
   ParseIntPipe,
   Query,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { Service } from './interfaces/service.interface';
 import { ServicesService } from './services.service';
 import { assertIsDefinedOrThrowNotFound } from '../assertions';
+import { AuthenticatedUser } from '../auth/authenticated-user.interface';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('services')
@@ -36,6 +39,38 @@ export class ServicesController {
     );
     assertIsDefinedOrThrowNotFound(service);
     return service;
+  }
+
+  @Get('users')
+  async findUserServices(
+    @Req() request: Request,
+    @Query('includeCharts', new DefaultValuePipe(false), ParseBoolPipe)
+    includeCharts: boolean,
+  ): Promise<Service[]> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    const user: AuthenticatedUser = request.user;
+    assertIsDefinedOrThrowNotFound(user);
+    const services = await this.servicesService.findUserServicesById(
+      user.uid,
+      includeCharts,
+    );
+    assertIsDefinedOrThrowNotFound(services);
+    return services;
+  }
+
+  @Get('users/:uid')
+  async findUserServicesById(
+    @Param('uid') uid: string,
+    @Query('includeCharts', new DefaultValuePipe(false), ParseBoolPipe)
+    includeCharts: boolean,
+  ): Promise<Service[]> {
+    const services = await this.servicesService.findUserServicesById(
+      uid,
+      includeCharts,
+    );
+    assertIsDefinedOrThrowNotFound(services);
+    return services;
   }
 
   @Get(':id')
