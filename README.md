@@ -50,15 +50,6 @@ These sharding information is used to divide the load of periodically moving lin
 If you do not set the variables, the application will still work properly but have a bottleneck that prevents it from
 properly scaling horizontally.
 
-## Global Filter
-
-Sometimes, people try to send fake data to mess up with the displayed data.
-While not being perfect, these kind of requests can usually be blocked and logged with a simple word filter.
-
-| Variable       | Default Value           | Description                                                       |
-| -------------- | ----------------------- | ----------------------------------------------------------------- |
-| WORD_BLOCKLIST | ["I do not like pizza"] | A list of words that should be blocked, formatted as a JSON array |
-
 ## Docker Compose
 
 The Docker Compose file allows you to start both the Redis server and the bStats backend itself.
