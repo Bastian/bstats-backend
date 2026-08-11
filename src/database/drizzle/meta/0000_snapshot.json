@@ -1,0 +1,66 @@
+{
+  "id": "4f2e321e-c210-4dfc-bc47-77a930b4494a",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.historic_line_chart_data": {
+      "name": "historic_line_chart_data",
+      "schema": "",
+      "columns": {
+        "chartid": {
+          "name": "chartid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tms2000": {
+          "name": "tms2000",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "linename": {
+          "name": "linename",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "historic_line_chart_data_chartid_tms2000_linename_key": {
+          "name": "historic_line_chart_data_chartid_tms2000_linename_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "chartid",
+            "tms2000",
+            "linename"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

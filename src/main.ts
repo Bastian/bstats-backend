@@ -6,6 +6,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { MigrationService } from './database/migration.service';
 
 function swagger(app) {
   const options = new DocumentBuilder()
@@ -18,6 +19,12 @@ function swagger(app) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+
+  // Before app.listen(), so neither an HTTP request nor a cron job can hit the
+  // database before the schema is up to date. Failing here on purpose: the
+  // application must not run against a schema it does not know.
+  await app.get(MigrationService).migrate();
+
   swagger(app);
   app.useGlobalPipes(
     new ValidationPipe({

@@ -12,28 +12,7 @@ export class HistoricLineChartDataService {
     private redisChartsService: RedisChartsService,
     private connectionService: ConnectionService,
     private postgresService: PostgresService,
-  ) {
-    postgresService
-      .getPool()
-      .connect()
-      .then((client) => {
-        client
-          .query(
-            `
-CREATE TABLE IF NOT EXISTS historic_line_chart_data (
-  chartId integer NOT NULL,
-  tms2000 integer NOT NULL,
-  lineName varchar(255) NOT NULL,
-  value real NULL,
-  UNIQUE (chartId, tms2000, lineName)
-);
-      `,
-          )
-          .then(() => {
-            client.release();
-          });
-      });
-  }
+  ) {}
 
   async setLineChartData(
     id: number,
