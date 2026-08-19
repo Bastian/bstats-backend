@@ -68,4 +68,20 @@ export class ServicesService {
     }
     return this.findOne(serviceId, includeCharts);
   }
+
+  async findUserServicesById(
+    uid: string,
+    includeCharts = false,
+  ): Promise<Service[] | null> {
+    const serviceIds = await this.redisServicesService.findUserServiceIds(uid);
+
+    if (serviceIds === null) {
+      return null;
+    }
+
+    const services = await Promise.all(
+      serviceIds.map((id) => this.findOne(id, includeCharts)),
+    );
+    return services.filter(isNotNull);
+  }
 }

@@ -56,4 +56,16 @@ export class RedisServicesService {
 
     return parseInt(serviceId);
   }
+
+  async findUserServiceIds(uid: string): Promise<number[] | null> {
+    const services = await this.connectionService
+      .getRedis()
+      .smembers(`users.index.plugins.uid:${uid}`);
+
+    if (services == null) {
+      return null;
+    }
+
+    return services.map((s) => parseInt(s));
+  }
 }
