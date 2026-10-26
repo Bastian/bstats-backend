@@ -8,6 +8,13 @@
       "when": 1786464311113,
       "tag": "0000_baseline",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786464444186,
+      "tag": "0001_line-chart-data-daily",
+      "breakpoints": true
     }
   ]
 }

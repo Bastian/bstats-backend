@@ -1,4 +1,14 @@
-import { integer, pgTable, real, unique, varchar } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import {
+  boolean,
+  check,
+  integer,
+  pgTable,
+  primaryKey,
+  real,
+  unique,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 export const historicLineChartData = pgTable(
   'historic_line_chart_data',
@@ -13,6 +23,33 @@ export const historicLineChartData = pgTable(
       table.chartId,
       table.tms2000,
       table.lineName,
+    ),
+  ],
+);
+
+export const lineChartDataDaily = pgTable(
+  'line_chart_data_daily',
+  {
+    chartId: integer('chart_id').notNull(),
+    lineName: varchar('line_name', { length: 255 }).notNull(),
+    day: integer('day').notNull(),
+    slots: real('slots').array().notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.chartId, table.lineName, table.day] }),
+  ],
+);
+
+export const lineChartMigrationState = pgTable(
+  'line_chart_migration_state',
+  {
+    singleton: boolean('singleton').primaryKey().default(true),
+    migratedBelow: integer('migrated_below').notNull().default(0),
+  },
+  (table) => [
+    check(
+      'line_chart_migration_state_singleton_check',
+      sql`${table.singleton}`,
     ),
   ],
 );

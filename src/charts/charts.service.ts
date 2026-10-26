@@ -73,6 +73,8 @@ export class ChartsService {
   ): Promise<SingleLineChartData | null> {
     const startTms2000 = this.dateUtilService.dateToTms2000(new Date()) - 1;
 
+    // Last tms2000 archived to Postgres; everything after it is only in Redis.
+    // Pre-day-rows values can be any bucket, so no day alignment is assumed
     const lastSyncTms2000 = await this.connectionService
       .getRedis()
       .get(`last-sync:${id}.${line}`);

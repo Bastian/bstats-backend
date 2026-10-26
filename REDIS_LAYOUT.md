@@ -66,8 +66,9 @@ Key | Description
 --- | ---
 `signature.cache:<tms2000>.<uid>` | A svg string. The uid is the unique id of the signature. At the moment it is just the plugin id.
 
-## Cache
+## Archiving
 
 Key | Description
 --- | ---
-`history-data:<id>:<line>:<tms2000Div1000>` | A cache with the historic line data. Expires after 1 week.
+`last-sync:<chartUid>.<line>` | A string (integer). The last tms2000 archived to Postgres: everything after it is served from Redis, the rest from Postgres. The archiver writes the last bucket of a day (`day * 48 + 47`), but pre-day-rows values can be any bucket.
+`lock:single_line_chart_sync:<chartUid>:<line>` | Held while the archiver processes a line chart; expires after 29 minutes, never released. Only makes a wrong `SHARD_NUMBER`/`TOTAL_SHARDS` configuration visible.

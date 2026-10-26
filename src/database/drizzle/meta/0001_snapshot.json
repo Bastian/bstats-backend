@@ -1,0 +1,144 @@
+{
+  "id": "2936b3f5-e249-4f3f-a6a1-d258573b90d2",
+  "prevId": "4f2e321e-c210-4dfc-bc47-77a930b4494a",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.historic_line_chart_data": {
+      "name": "historic_line_chart_data",
+      "schema": "",
+      "columns": {
+        "chartid": {
+          "name": "chartid",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tms2000": {
+          "name": "tms2000",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "linename": {
+          "name": "linename",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "historic_line_chart_data_chartid_tms2000_linename_key": {
+          "name": "historic_line_chart_data_chartid_tms2000_linename_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "chartid",
+            "tms2000",
+            "linename"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.line_chart_data_daily": {
+      "name": "line_chart_data_daily",
+      "schema": "",
+      "columns": {
+        "chart_id": {
+          "name": "chart_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "line_name": {
+          "name": "line_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "day": {
+          "name": "day",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slots": {
+          "name": "slots",
+          "type": "real[]",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "line_chart_data_daily_chart_id_line_name_day_pk": {
+          "name": "line_chart_data_daily_chart_id_line_name_day_pk",
+          "columns": [
+            "chart_id",
+            "line_name",
+            "day"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.line_chart_migration_state": {
+      "name": "line_chart_migration_state",
+      "schema": "",
+      "columns": {
+        "singleton": {
+          "name": "singleton",
+          "type": "boolean",
+          "primaryKey": true,
+          "notNull": true,
+          "default": true
+        },
+        "migrated_below": {
+          "name": "migrated_below",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "line_chart_migration_state_singleton_check": {
+          "name": "line_chart_migration_state_singleton_check",
+          "value": "\"line_chart_migration_state\".\"singleton\""
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

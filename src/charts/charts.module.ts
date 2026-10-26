@@ -6,6 +6,7 @@ import { DateUtilService } from './date-util.service';
 import { ChartRendererModule } from './chart-renderer/chart-renderer.module';
 import { SignaturesModule } from './signatures/signatures.module';
 import { HistoricLineChartDataService } from './historic-line-chart-data.service';
+import { LineChartMigrationStateService } from './line-chart-migration-state.service';
 import { DataArchiverService } from './data-archiver.service';
 import { ServicesModule } from '../services/services.module';
 import { ConfigModule } from '@nestjs/config';
@@ -16,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
     RedisChartsService,
     DateUtilService,
     HistoricLineChartDataService,
+    LineChartMigrationStateService,
     DataArchiverService,
   ],
   controllers: [ChartsController],
