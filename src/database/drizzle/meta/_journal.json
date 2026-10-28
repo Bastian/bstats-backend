@@ -15,6 +15,13 @@
       "when": 1786464444186,
       "tag": "0001_line-chart-data-daily",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793220059169,
+      "tag": "0002_drop-historic-line-chart-data",
+      "breakpoints": true
     }
   ]
 }

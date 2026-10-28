@@ -1,0 +1,65 @@
+{
+  "id": "b70d4f71-c645-4fb1-9a85-72ad418b96fd",
+  "prevId": "2936b3f5-e249-4f3f-a6a1-d258573b90d2",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.line_chart_data_daily": {
+      "name": "line_chart_data_daily",
+      "schema": "",
+      "columns": {
+        "chart_id": {
+          "name": "chart_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "line_name": {
+          "name": "line_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "day": {
+          "name": "day",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slots": {
+          "name": "slots",
+          "type": "real[]",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "line_chart_data_daily_chart_id_line_name_day_pk": {
+          "name": "line_chart_data_daily_chart_id_line_name_day_pk",
+          "columns": [
+            "chart_id",
+            "line_name",
+            "day"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

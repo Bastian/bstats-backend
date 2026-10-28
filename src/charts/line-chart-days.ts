@@ -7,7 +7,8 @@ export const SLOTS_PER_DAY = 48;
 
 /**
  * A day's buckets. `null` = nothing recorded (renders as 0), `NaN` = manual
- * 'ignored' marker for broken buckets (renders as a gap), number = value.
+ * 'ignored' marker for broken buckets (dropped from the API output), number =
+ * value.
  */
 export type Slots = (number | null)[];
 

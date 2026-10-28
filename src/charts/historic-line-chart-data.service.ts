@@ -1,11 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ClientBase } from 'pg';
 import { DateUtilService } from './date-util.service';
 import { RedisChartsService } from './redis-charts/redis-charts.service';
 import { SingleLineChartData } from './interfaces/data/single-line-chart-data.interface';
 import { ConnectionService } from '../database/connection.service';
 import { PostgresService } from '../database/postgres.service';
-import { LineChartMigrationStateService } from './line-chart-migration-state.service';
 import {
   SLOTS_PER_DAY,
   Slots,
@@ -24,37 +22,16 @@ export class HistoricLineChartDataService {
     private redisChartsService: RedisChartsService,
     private connectionService: ConnectionService,
     private postgresService: PostgresService,
-    private migrationStateService: LineChartMigrationStateService,
   ) {}
-
-  /** Old per-bucket format, used until the backfill reaches the chart. */
-  private async setLineChartData(
-    client: ClientBase,
-    id: number,
-    tms2000: number,
-    line: string,
-    value: number | null,
-  ) {
-    await client.query(
-      `
-  INSERT INTO historic_line_chart_data (chartId, tms2000, lineName, value)
-  VALUES ($1, $2, $3, $4)
-  ON CONFLICT (chartId, tms2000, lineName)
-  DO UPDATE SET value = $4;
-      `,
-      [id, tms2000, line, value],
-    );
-  }
 
   /** Writes one day as a single row; null slots keep what is already there. */
   private async setLineChartDay(
-    client: ClientBase,
     id: number,
     line: string,
     day: number,
     slots: Slots,
   ) {
-    await client.query(
+    await this.postgresService.getPool().query(
       `
 INSERT INTO line_chart_data_daily (chart_id, line_name, day, slots)
 VALUES ($1, $2, $3, $4::real[])
@@ -92,40 +69,6 @@ ON CONFLICT (chart_id, line_name, day) DO UPDATE SET slots = (
       elements[timestamp] = 0;
     }
 
-    if (await this.migrationStateService.isMigrated(id)) {
-      await this.readDaily(elements, id, line, tms2000Min, tms2000Last);
-    } else {
-      await this.readBuckets(
-        elements,
-        id,
-        line,
-        tms2000Min,
-        tms2000Last,
-        maxElements,
-      );
-    }
-
-    // Convert to array, skipping null values
-    for (const [timestamp, value] of Object.entries(elements)) {
-      if (value !== null) {
-        data.push([parseInt(timestamp), value]);
-      }
-    }
-
-    // Sort by timestamp
-    data.sort((a, b) => b[0] - a[0]);
-
-    return data;
-  }
-
-  /** Reads from the day-array format, one row per day. */
-  private async readDaily(
-    elements: Record<number, number | null>,
-    id: number,
-    line: string,
-    tms2000Min: number,
-    tms2000Last: number,
-  ) {
     const response = await this.postgresService.getPool().query<{
       day: number;
       slots: Slots;
@@ -153,36 +96,23 @@ ORDER BY day DESC;
           continue;
         }
 
-        // NaN = 'ignored' marker: null drops the point, a gap instead of a 0
+        // NaN 'ignored' marker: dropped; the chart connects the line across it
         elements[this.dateUtilService.tms2000ToTimestamp(tms2000)] =
           Number.isNaN(value) ? null : value;
       }
     }
-  }
 
-  /** Reads from the old per-bucket format, one row per bucket. */
-  private async readBuckets(
-    elements: Record<number, number | null>,
-    id: number,
-    line: string,
-    tms2000Min: number,
-    tms2000Last: number,
-    maxElements: number,
-  ) {
-    const response = await this.postgresService.getPool().query(
-      `
-SELECT tms2000, value FROM historic_line_chart_data
-WHERE chartId = $1 AND lineName = $2 AND tms2000 >= $3 AND tms2000 <= $4
-ORDER BY tms2000 DESC
-LIMIT $5;
-      `,
-      [id, line, tms2000Min, tms2000Last, maxElements],
-    );
-
-    for (const row of response.rows) {
-      elements[this.dateUtilService.tms2000ToTimestamp(row.tms2000)] =
-        row.value ?? null;
+    // Convert to array, skipping null values
+    for (const [timestamp, value] of Object.entries(elements)) {
+      if (value !== null) {
+        data.push([parseInt(timestamp), value]);
+      }
     }
+
+    // Sort by timestamp
+    data.sort((a, b) => b[0] - a[0]);
+
+    return data;
   }
 
   /**
@@ -235,8 +165,14 @@ LIMIT $5;
       );
     }
 
-    if (buckets.length > 0) {
-      await this.writeBuckets(id, line, buckets);
+    // 'ignored' becomes NaN; a null slot already means "nothing recorded"
+    for (const { day, slots } of groupIntoDays(
+      buckets.map(({ tms2000, value }): [number, number] => [
+        tms2000,
+        value === 'ignored' ? NaN : value,
+      ]),
+    )) {
+      await this.setLineChartDay(id, line, day, slots);
     }
 
     // last-sync is the last tms2000 that is fully archived.
@@ -255,56 +191,6 @@ LIMIT $5;
         ...buckets.map(({ timestamp }) => timestamp),
         ...broken,
       ]);
-    }
-  }
-
-  /**
-   * Writes in the format the watermark prescribes, holding the watermark (see
-   * `lockMigratedBelow`) so a backfill batch cannot move it past the chart
-   * between format decision and write.
-   */
-  private async writeBuckets(
-    id: number,
-    line: string,
-    buckets: { tms2000: number; value: number | 'ignored' }[],
-  ) {
-    const client = await this.postgresService.getPool().connect();
-    let destroyConnection = false;
-    try {
-      await client.query('BEGIN');
-
-      if (id < (await this.migrationStateService.lockMigratedBelow(client))) {
-        // 'ignored' becomes NaN; a null slot already means "nothing recorded"
-        for (const { day, slots } of groupIntoDays(
-          buckets.map(({ tms2000, value }): [number, number] => [
-            tms2000,
-            value === 'ignored' ? NaN : value,
-          ]),
-        )) {
-          await this.setLineChartDay(client, id, line, day, slots);
-        }
-      } else {
-        // One row per bucket, 'ignored' is a NULL value
-        for (const { tms2000, value } of buckets) {
-          await this.setLineChartData(
-            client,
-            id,
-            tms2000,
-            line,
-            value === 'ignored' ? null : value,
-          );
-        }
-      }
-
-      await client.query('COMMIT');
-    } catch (error) {
-      // A failed rollback may leave the connection mid-transaction; don't pool it
-      await client.query('ROLLBACK').catch(() => {
-        destroyConnection = true;
-      });
-      throw error;
-    } finally {
-      client.release(destroyConnection);
     }
   }
 }
